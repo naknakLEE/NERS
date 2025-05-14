@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  gateway-server:
+    image: gateway:0.0.1
+    container_name: gateway-server
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: gateway-server
+    volumes:
+      - ./:/app
+
+  auth-server:
+    image: auth:0.0.1
+    container_name: auth-server
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: auth-server
+    volumes:
+      - ./:/app
+
+  event-server:
+    image: event:0.0.1
+    container_name: event-server
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: event-server
+    volumes:
+      - ./:/app
