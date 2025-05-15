@@ -2,7 +2,7 @@ FROM node:18.20.8-alpine AS base
 WORKDIR /app
 ENV LC_ALL=C.UTF-8
 ENV LANG=C.UTF-8
-RUN apk add tzdata && ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+RUN apk add --no-cache tzdata python3 make g++ && ln -snf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 FROM base AS gateway-server
 CMD ["npm", "run", "start:gateway-server"]

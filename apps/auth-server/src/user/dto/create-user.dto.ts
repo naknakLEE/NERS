@@ -16,7 +16,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @MinLength(4)
   @MaxLength(20)
-  id: string;
+  username: string;
 
   @ApiProperty({
     default: 'test1234!',
