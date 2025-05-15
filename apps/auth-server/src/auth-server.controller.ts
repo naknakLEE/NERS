@@ -1,6 +1,6 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 
-@Controller('auth')
+@Controller()
 export class AuthServerController {
   private readonly logger = new Logger(AuthServerController.name);
 

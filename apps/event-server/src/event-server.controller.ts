@@ -1,6 +1,6 @@
 import { Controller, Get, Logger } from '@nestjs/common';
 
-@Controller('event')
+@Controller()
 export class EventServerController {
   private readonly logger = new Logger(EventServerController.name);
 

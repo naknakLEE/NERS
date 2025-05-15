@@ -22,6 +22,8 @@ services:
       target: auth-server
     volumes:
       - ./:/app
+    ports:
+      - 3001:3000
 
   event-server:
     image: event:0.0.1
