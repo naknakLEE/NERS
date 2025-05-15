@@ -1,12 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
-import { EventServerService } from './event-server.service';
+import { Controller, Get, Logger } from '@nestjs/common';
 
-@Controller()
+@Controller('event')
 export class EventServerController {
-  constructor(private readonly eventServerService: EventServerService) {}
+  private readonly logger = new Logger(EventServerController.name);
 
-  @Get()
-  getHello(): string {
-    return this.eventServerService.getHello();
+
+  @Get('ping')
+  ping(): string {
+    this.logger.log('ping');
+    return 'pong';
   }
 }

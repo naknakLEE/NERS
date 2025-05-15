@@ -8,6 +8,8 @@ services:
       context: .
       dockerfile: docker/Dockerfile
       target: gateway-server
+    ports:
+      - 3000:3000
     volumes:
       - ./:/app
 

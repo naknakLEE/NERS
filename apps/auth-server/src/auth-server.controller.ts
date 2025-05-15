@@ -1,12 +1,13 @@
-import { Controller, Get } from '@nestjs/common';
-import { AuthServerService } from './auth-server.service';
+import { Controller, Get, Logger } from '@nestjs/common';
 
-@Controller()
+@Controller('auth')
 export class AuthServerController {
-  constructor(private readonly authServerService: AuthServerService) {}
+  private readonly logger = new Logger(AuthServerController.name);
 
-  @Get()
-  getHello(): string {
-    return this.authServerService.getHello();
+
+  @Get('ping')
+  ping(): string {
+    this.logger.log('ping');
+    return 'pong';
   }
 }
