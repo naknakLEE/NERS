@@ -8,6 +8,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('NERS')
+    .addBearerAuth()
     .setDescription('Nexon Event Reward System')
     .setVersion('1.0')
     .build();

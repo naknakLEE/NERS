@@ -1,7 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { Role } from '../../common/enums/role.enum';
 import * as bcrypt from 'bcrypt';
+import { ConstantsService } from '@app/constants';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -13,8 +13,13 @@ export class User {
   @Prop({ required: true })
   password: string;
 
-  @Prop({ type: String, enum: Role, default: Role.USER, required: true })
-  role: Role;
+  @Prop({
+    type: String,
+    enum: ConstantsService.Role,
+    default: ConstantsService.Role.USER,
+    required: true,
+  })
+  role: string;
 
   static async hashPassword(password: string): Promise<string> {
     const saltRounds = 10;
