@@ -1,15 +1,20 @@
-import { Controller, Post, Body } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
+import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
+import { CreateUserDto } from '../auth/dto/create-user.dto';
 import { ApiConsumes } from '@nestjs/swagger';
 import { UserService } from './user.service';
+import { UpdateUserRoleDto } from './dto/update-user-role';
 
 @Controller()
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('register')
+  // PATCH /users/{userId}/role (관리자: 특정 사용자 역할 변경)
+  @Patch(':userId/role')
   @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
-  register(@Body() createUserDto: CreateUserDto) {
-    return this.userService.register(createUserDto);
+  updateUserRole(
+    @Param('userId') userId: string,
+    @Body() updateUserRoleDto: UpdateUserRoleDto,
+  ) {
+    return this.userService.updateUserRole(userId, updateUserRoleDto);
   }
 }

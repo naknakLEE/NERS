@@ -8,4 +8,4 @@ db.createUser({
     },
   ],
 });
-db.createCollection('user');
+db.createCollection('users');
