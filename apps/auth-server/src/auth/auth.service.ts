@@ -1,10 +1,15 @@
 import { Model } from 'mongoose';
-import { UserService } from '../user/user.service';
 import { LoginDto } from './dto/login-user.dto';
 import { User, UserDocument } from '../user/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,5 +41,33 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+  async register(createUserDto: CreateUserDto) {
+    const { username } = createUserDto;
+
+    const existingUser = await this.userModel
+      .findOne({ $or: [{ username }] })
+      .exec();
+    if (existingUser) {
+      if (existingUser.username === username) {
+        throw new ConflictException(`Username '${username}' already exists.`);
+      }
+    }
+
+    const newUser = new this.userModel(createUserDto);
+
+    try {
+      const savedUser = await newUser.save();
+
+      return {
+        username: savedUser.username,
+        role: savedUser.role,
+      } as User;
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new ConflictException('Username or email already exists.');
+      }
+      throw new InternalServerErrorException('Failed to create user.');
+    }
   }
 }
