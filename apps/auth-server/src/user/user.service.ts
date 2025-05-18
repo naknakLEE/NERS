@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { User } from './schemas/user.schema';
 import { UserDocument } from './schemas/user.schema';
 import { Model } from 'mongoose';
@@ -11,11 +11,21 @@ export class UserService {
 
   async updateUserRole(userId: string, updateUserRoleDto: UpdateUserRoleDto) {
     const { role } = updateUserRoleDto;
-    const user = await this.userModel.findByIdAndUpdate(
-      userId,
-      { role },
-      { new: true },
-    );
+    let user: UserDocument | null = null;
+
+    try {
+      user = await this.userModel.findByIdAndUpdate(
+        userId,
+        { role },
+        { new: true },
+      );
+    } catch (error) {
+      if (error.name === 'CastError') {
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+      throw error;
+    }
+
     return user;
   }
 }
