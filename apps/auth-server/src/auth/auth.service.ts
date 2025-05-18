@@ -18,6 +18,7 @@ import {
 } from '../user/schemas/refresh-token.schema';
 import { ConfigService } from '@nestjs/config';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import * as ms from 'ms';
 export interface Tokens {
   access_token: string;
   refresh_token: string;
@@ -107,7 +108,6 @@ export class AuthService {
 
   async refreshToken(oldRefreshToken: RefreshTokenDto): Promise<Tokens> {
     let decoded;
-    console.log(oldRefreshToken.refreshToken);
     try {
       decoded = await this.jwtService.verifyAsync(
         oldRefreshToken.refreshToken,
@@ -120,7 +120,7 @@ export class AuthService {
       throw new ForbiddenException('Refresh token invalid or revoked.');
     }
 
-    const userId = decoded.sub;
+    const userId = decoded.userId;
 
     const refreshTokenDoc = await this.refreshTokenModel.findOne({
       userId,
@@ -177,11 +177,6 @@ export class AuthService {
       }),
     ]);
 
-    console.log(
-      this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-      this.configService.get<string>('JWT_REFRESH_TOKEN_EXPIRATION_TIME'),
-    );
-
     return { access_token: accessToken, refresh_token: refreshToken };
   }
 
@@ -189,27 +184,18 @@ export class AuthService {
     userId: string,
     token: string,
   ): Promise<RefreshTokenDocument> {
-    const expiresIn = this.configService.get<string>(
+    const expiresInString = this.configService.get<string>(
       'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
     );
-    const expiresAt = new Date();
-    if (expiresIn.endsWith('d')) {
-      expiresAt.setDate(
-        expiresAt.getDate() + parseInt(expiresIn.slice(0, -1), 10),
-      );
-    } else if (expiresIn.endsWith('h')) {
-      expiresAt.setHours(
-        expiresAt.getHours() + parseInt(expiresIn.slice(0, -1), 10),
-      );
-    } else if (expiresIn.endsWith('m')) {
-      expiresAt.setMinutes(
-        expiresAt.getMinutes() + parseInt(expiresIn.slice(0, -1), 10),
-      );
-    } else {
+    const expiresInMilliseconds = ms(expiresInString);
+
+    if (typeof expiresInMilliseconds !== 'number') {
       throw new InternalServerErrorException(
-        'Invalid refresh token expiration format',
+        'Invalid refresh token expiration format.',
       );
     }
+
+    const expiresAt = new Date(Date.now() + expiresInMilliseconds);
 
     const refreshTokenDoc = new this.refreshTokenModel({
       userId,

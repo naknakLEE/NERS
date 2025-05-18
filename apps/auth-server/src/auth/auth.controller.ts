@@ -11,6 +11,7 @@ import { AuthService, Tokens } from './auth.service';
 import { ApiConsumes } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LogoutUserDto } from './dto/logout-user.dto';
 
 @Controller()
 export class AuthController {
@@ -42,16 +43,17 @@ export class AuthController {
   }
 
   @Post('logout')
+  @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
   async logout(
-    @Body('refreshToken') refreshToken: string,
+    @Body() logoutUserDto: LogoutUserDto,
   ): Promise<{ message: string }> {
-    if (!refreshToken) {
+    if (!logoutUserDto.refreshToken) {
       return {
         message:
           'Logout processed. No refresh token provided or client already cleared tokens.',
       };
     }
-    await this.authService.logout(refreshToken);
+    await this.authService.logout(logoutUserDto.refreshToken);
     return { message: 'Successfully logged out.' };
   }
 }
