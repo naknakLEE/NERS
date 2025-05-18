@@ -12,6 +12,8 @@ services:
       - 3000:3000
     volumes:
       - ./:/app
+    depends_on:
+      - mongo-db
 
   auth-server:
     image: auth:0.0.1
@@ -24,6 +26,8 @@ services:
       - ./:/app
     ports:
       - 3001:3000
+    depends_on:
+      - mongo-db
 
   event-server:
     image: event:0.0.1
@@ -34,6 +38,10 @@ services:
       target: event-server
     volumes:
       - ./:/app
+    ports:
+      - 3002:3000
+    depends_on:
+      - mongo-db
 
   mongo-db:
     image: mongo:latest

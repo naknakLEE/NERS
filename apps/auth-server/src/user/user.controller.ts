@@ -1,5 +1,4 @@
 import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
-import { CreateUserDto } from '../auth/dto/create-user.dto';
 import { ApiConsumes } from '@nestjs/swagger';
 import { UserService } from './user.service';
 import { UpdateUserRoleDto } from './dto/update-user-role';
