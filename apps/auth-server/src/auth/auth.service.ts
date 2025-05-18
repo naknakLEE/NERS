@@ -1,5 +1,4 @@
 import { Model } from 'mongoose';
-import { LoginDto } from './dto/login-user.dto';
 import { User, UserDocument } from '../user/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import {
@@ -11,14 +10,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { CreateUserDto } from './dto/create-user.dto';
 import {
   RefreshToken,
   RefreshTokenDocument,
 } from '../user/schemas/refresh-token.schema';
 import { ConfigService } from '@nestjs/config';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import * as ms from 'ms';
+import { CreateUserDto, LoginDto, RefreshTokenDto } from '@app/dto';
 export interface Tokens {
   access_token: string;
   refresh_token: string;

@@ -23,6 +23,12 @@
       ],
       "@app/constants/*": [
         "libs/constants/src/*"
+      ],
+      "@app/dto": [
+        "libs/dto/src"
+      ],
+      "@app/dto/*": [
+        "libs/dto/src/*"
       ]
     }
   }

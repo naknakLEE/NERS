@@ -1,9 +1,11 @@
-import { Controller, Get, Logger, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Req, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ProxyService } from './proxy.service';
 import { Request, Response } from 'express';
 import { Role } from '@app/constants';
 import { Roles } from '../auth/roles.decorator';
+import { ApiConsumes } from '@nestjs/swagger';
+import { LogoutUserDto } from '@app/dto';
 
 @Controller()
 export class ProxyController {
@@ -41,5 +43,15 @@ export class ProxyController {
   @Roles(Role.USER)
   proxyEventPing(@Req() req: Request, @Res() res: Response): void {
     this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  @Post('logout')
+  @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  proxyAuthLogout(
+    @Body() logoutUserDto: LogoutUserDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): void {
+    this.proxyService.proxyToService(this.authServiceUrl, req, res);
   }
 }

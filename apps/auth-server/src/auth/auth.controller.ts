@@ -6,12 +6,10 @@ import {
   Post,
   Res,
 } from '@nestjs/common';
-import { LoginDto } from './dto/login-user.dto';
 import { AuthService, Tokens } from './auth.service';
 import { ApiConsumes } from '@nestjs/swagger';
-import { CreateUserDto } from './dto/create-user.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { LogoutUserDto } from './dto/logout-user.dto';
+import { CreateUserDto, LogoutUserDto, RefreshTokenDto } from '@app/dto';
+import { LoginDto } from '@app/dto';
 
 @Controller()
 export class AuthController {
