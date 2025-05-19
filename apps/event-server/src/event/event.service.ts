@@ -41,15 +41,10 @@ export class EventService {
   }
 
   async getEventById(eventId: string) {
-    try {
-      const event = await this.eventModel.findById(eventId);
-      return event;
-    } catch (error) {
-      if (error.name === 'CastError') {
-        throw new NotFoundException(`Event with ID ${eventId} not found`);
-      }
-      this.logger.error(error);
-      throw new InternalServerErrorException('Failed to get event.');
+    const event = await this.eventModel.findById(eventId);
+    if (!event) {
+      throw new NotFoundException(`Event with ID ${eventId} not found`);
     }
+    return event;
   }
 }

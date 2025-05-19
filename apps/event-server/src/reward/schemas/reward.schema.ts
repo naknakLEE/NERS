@@ -38,6 +38,9 @@ export type RewardDocument = Reward & Document;
 
 @Schema({ timestamps: true, collection: 'rewards' })
 export class Reward {
+  @Prop({ type: String, default: () => new Types.ObjectId() })
+  _id: string;
+
   @Prop({ type: Types.ObjectId, ref: 'Event', required: true, index: true })
   eventId: Types.ObjectId;
 

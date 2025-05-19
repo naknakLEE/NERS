@@ -11,19 +11,15 @@ export class UserService {
 
   async updateUserRole(userId: string, updateUserRoleDto: UpdateUserRoleDto) {
     const { role } = updateUserRoleDto;
-    let user: UserDocument | null = null;
 
-    try {
-      user = await this.userModel.findByIdAndUpdate(
-        userId,
-        { role },
-        { new: true },
-      );
-    } catch (error) {
-      if (error.name === 'CastError') {
-        throw new NotFoundException(`User with ID ${userId} not found`);
-      }
-      throw error;
+    const user = await this.userModel.findByIdAndUpdate(
+      userId,
+      { role },
+      { new: true },
+    );
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
     return user;

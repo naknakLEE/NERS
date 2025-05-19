@@ -7,6 +7,9 @@ export type UserDocument = HydratedDocument<User>;
 
 @Schema({ timestamps: true, toJSON: { virtuals: true } })
 export class User {
+  @Prop({ type: String, default: () => new Types.ObjectId() })
+  _id: string;
+
   @Prop({ required: true, unique: true, trim: true, index: true })
   username: string;
 

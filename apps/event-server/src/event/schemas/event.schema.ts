@@ -11,6 +11,9 @@ export enum EventStatus {
 
 @Schema({ timestamps: true, toJSON: { virtuals: true } })
 export class Event {
+  @Prop({ type: String, default: () => new Types.ObjectId() })
+  _id: string;
+
   @Prop({ required: true })
   name: string;
 
