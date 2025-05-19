@@ -1,4 +1,3 @@
-import { RefreshTokenDocument } from '../../infrastructure/repositories/schemas/refresh-token.schema';
 import { RefreshToken } from '../../domain/entites/refresh-token.entity';
 
 import {

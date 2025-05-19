@@ -16,6 +16,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenRepository } from './infrastructure/repositories/refresh-token.repository';
 import { LogoutUserUseCase } from './application/use-cases/logout-user.use-case';
 import { RefreshTokenUseCase } from './application/use-cases/refresh-token.use-case';
+import { UserController } from './infrastructure/controller/user.controller';
+import { UpdateUserRoleUseCase } from './application/use-cases/update-user-role.use-case';
 
 @Module({
   imports: [
@@ -36,13 +38,14 @@ import { RefreshTokenUseCase } from './application/use-cases/refresh-token.use-c
       inject: [ConfigService],
     }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, UserController],
   providers: [
     // Use Cases
     CreateUserUseCase,
     LoginUserUseCase,
     LogoutUserUseCase,
     RefreshTokenUseCase,
+    UpdateUserRoleUseCase,
     // Repositories
     {
       provide: 'UserRepository',

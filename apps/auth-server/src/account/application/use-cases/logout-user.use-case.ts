@@ -1,5 +1,5 @@
 import { JwtTokenService } from '../service/jwt-token.service';
-import { BadRequestException, Inject, Logger } from '@nestjs/common';
+import { Inject, Logger } from '@nestjs/common';
 import { IRefreshTokenRepository } from '../../domain/repositories/refresh-token.interface';
 
 export class LogoutUserUseCase {

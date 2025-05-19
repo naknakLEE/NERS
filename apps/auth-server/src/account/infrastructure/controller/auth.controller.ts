@@ -1,5 +1,5 @@
 import { CreateUserUseCase } from './../../application/use-cases/create-user.use-case';
-import { Body, Controller, ForbiddenException, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { ApiConsumes } from '@nestjs/swagger';
 import {
   CreateUserDto,
