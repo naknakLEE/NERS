@@ -7,6 +7,8 @@ import {
   Req,
   Res,
   Logger,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { ApiConsumes } from '@nestjs/swagger';
 import { EventService } from './event.service';
@@ -16,6 +18,7 @@ import {
   GetUserFromHeader,
 } from '../common/get-user-from-header.decorator';
 import { Role } from '@app/constants';
+import { GetEventsDto } from '@app/dto/event/get-events.dto';
 
 @Controller()
 export class EventController {
@@ -34,6 +37,10 @@ export class EventController {
   }
 
   // GET /events: 이벤트 목록 조회
+  @Get()
+  getEvents(@Query() getEventsDto: GetEventsDto) {
+    return this.eventService.getEvents(getEventsDto);
+  }
 
   // GET /events/:eventId: 이벤트 상세 조회
 

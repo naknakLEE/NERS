@@ -8,6 +8,7 @@ import { Model } from 'mongoose';
 import { EventDocument } from './schemas/event.schema';
 import { CreateEventDto } from '@app/dto/event/create-event.dto';
 import { UserFromHeader } from '../common/get-user-from-header.decorator';
+import { GetEventsDto } from '@app/dto/event/get-events.dto';
 
 @Injectable()
 export class EventService {
@@ -28,5 +29,13 @@ export class EventService {
       this.logger.error(error);
       throw new InternalServerErrorException('Failed to create event.');
     }
+  }
+  async getEvents(getEventsDto: GetEventsDto) {
+    const { page, pageSize } = getEventsDto;
+    const events = await this.eventModel
+      .find()
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+    return events;
   }
 }
