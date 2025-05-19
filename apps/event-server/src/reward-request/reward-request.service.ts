@@ -19,7 +19,6 @@ import { UserFromHeader } from '../common/get-user-from-header.decorator';
 import { Reward } from '../reward/schemas/reward.schema';
 import { RewardDocument } from '../reward/schemas/reward.schema';
 import { EventDocument } from '../event/schemas/event.schema';
-import { EventConditionType } from '@app/dto/event/condition/condition-type.enum';
 
 interface MockUserActivityData {
   loginStreak?: number;

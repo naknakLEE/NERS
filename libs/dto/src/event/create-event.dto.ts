@@ -80,9 +80,9 @@ export class CreateEventDto {
   @ApiProperty({
     example: [
       {
-        type: EventConditionType.ACTION_COMPLETED,
-        name: 'Action Completed',
-        description: 'Action Completed',
+        type: EventConditionType.LOGIN_STREAK,
+        name: 'Login Streak',
+        description: 'Login Streak',
         parameters: {},
         requiredCount: 1,
       },
