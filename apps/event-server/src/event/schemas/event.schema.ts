@@ -1,13 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { EventStatusEnum } from '../domain/value-objects/event-status.vo';
 
 export type EventDocument = HydratedDocument<Event>;
-
-export enum EventStatus {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
-  COMPLETED = 'completed',
-}
 
 @Schema({ timestamps: true, toJSON: { virtuals: true } })
 export class Event {
@@ -26,8 +21,8 @@ export class Event {
   @Prop({ required: true })
   endDate: Date;
 
-  @Prop({ required: true, enum: EventStatus })
-  status: EventStatus;
+  @Prop({ required: true, enum: EventStatusEnum, type: String })
+  status: EventStatusEnum;
 
   @Prop({ required: true, type: Object })
   conditions: object;

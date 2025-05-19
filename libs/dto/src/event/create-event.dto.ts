@@ -1,39 +1,45 @@
-import { Role } from '@app/constants';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsEnum,
   IsDate,
-  IsObject,
   IsString,
   ValidateNested,
   IsArray,
   IsOptional,
-  IsNumber,
-  Min,
   IsBoolean,
+  IsObject,
 } from 'class-validator';
-import { EventStatus } from '../../../../apps/event-server/src/event/schemas/event.schema';
 import { EventConditionType } from './condition/condition-type.enum';
 import { Type } from 'class-transformer';
+import { EventStatusEnum } from 'apps/event-server/src/event/domain/value-objects/event-status.vo';
+import { EventConditionParams } from '@app/constants';
 
-export class EventConditionDto {
+export class EventConditionDto implements EventConditionParams {
+  @ApiProperty({ enum: EventConditionType })
   @IsEnum(EventConditionType)
+  @IsNotEmpty()
   type: EventConditionType;
 
+  @ApiProperty()
+  @IsString()
   @IsNotEmpty()
   name: string;
 
+  @ApiPropertyOptional()
   @IsOptional()
-  description: string;
+  @IsString()
+  description?: string;
 
+  @ApiPropertyOptional({
+    description: 'Parameters specific to the condition type',
+    example: { requiredLevel: 50 },
+    type: 'object',
+    additionalProperties: true,
+  })
   @IsOptional()
-  parameters: Record<string, any>;
-
-  @IsNumber()
-  @Min(1)
-  @IsOptional()
-  requiredCount: number = 1;
+  @IsObject()
+  parameters?: Record<string, any>;
 }
 export class CreateEventDto {
   @ApiProperty({
@@ -69,13 +75,13 @@ export class CreateEventDto {
   endDate: Date;
 
   @ApiProperty({
-    example: EventStatus.ACTIVE,
+    example: EventStatusEnum.ACTIVE,
     description: 'event status',
-    enum: EventStatus,
+    enum: EventStatusEnum,
   })
   @IsNotEmpty()
-  @IsEnum(EventStatus)
-  status: EventStatus;
+  @IsEnum(EventStatusEnum)
+  status: EventStatusEnum;
 
   @ApiProperty({
     example: [
@@ -83,8 +89,7 @@ export class CreateEventDto {
         type: EventConditionType.LOGIN_STREAK,
         name: 'Login Streak',
         description: 'Login Streak',
-        parameters: {},
-        requiredCount: 1,
+        parameters: { days: 7 },
       },
     ],
   })

@@ -1,3 +1,4 @@
+import { EventConditionType } from '@app/dto/event/condition/condition-type.enum';
 import { Injectable } from '@nestjs/common';
 
 export enum Role {
@@ -5,6 +6,13 @@ export enum Role {
   OPERATOR = 'OPERATOR',
   AUDITOR = 'AUDITOR',
   ADMIN = 'ADMIN',
+}
+
+export interface EventConditionParams {
+  type: EventConditionType;
+  name: string;
+  description?: string;
+  parameters?: Record<string, any>;
 }
 
 @Injectable()

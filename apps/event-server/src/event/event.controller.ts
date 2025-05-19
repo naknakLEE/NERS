@@ -19,21 +19,25 @@ import {
 } from '../common/get-user-from-header.decorator';
 import { Role } from '@app/constants';
 import { GetEventsDto } from '@app/dto/event/get-events.dto';
+import { CreateEventUseCase } from './application/use-cases/create-event.use-case';
 
 @Controller()
 export class EventController {
   private readonly logger = new Logger(EventController.name);
-  constructor(private readonly eventService: EventService) {}
+  constructor(
+    private readonly eventService: EventService,
+    private readonly createEventUseCase: CreateEventUseCase,
+  ) {}
 
   @Post()
-  @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  @ApiConsumes('application/json')
   createEvent(@Body() createEventDto: CreateEventDto) {
     const user = {
       userId: '1',
       role: Role.ADMIN,
       username: 'test',
     };
-    return this.eventService.createEvent(createEventDto, user);
+    return this.createEventUseCase.execute(createEventDto, user);
   }
 
   // GET /events: 이벤트 목록 조회
