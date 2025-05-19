@@ -1,10 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
-  CouponRewardDetails,
-  CurrencyRewardDetails,
-  ItemRewardDetails,
+  CurrencyType,
+  ICurrencyRewardParams,
+  IItemRewardParams,
   RewardType,
-} from 'apps/event-server/src/reward/schemas/reward.schema';
+} from '@app/constants';
+import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
   IsBoolean,
   IsEnum,
@@ -12,7 +13,40 @@ import {
   IsNumber,
   IsOptional,
   IsString,
+  ValidateNested,
 } from 'class-validator';
+
+export class ItemRewardDetailDto implements IItemRewardParams {
+  @IsEnum(RewardType)
+  @IsNotEmpty()
+  type: RewardType.ITEM;
+
+  @IsString()
+  @IsNotEmpty()
+  itemCode: string;
+
+  @IsString()
+  @IsOptional()
+  itemName?: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  quantity: number;
+}
+
+export class CurrencyRewardDetailDto implements ICurrencyRewardParams {
+  @IsEnum(RewardType)
+  @IsNotEmpty()
+  type: RewardType.CURRENCY;
+
+  @IsEnum(CurrencyType)
+  @IsNotEmpty()
+  currencyType: CurrencyType;
+
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number;
+}
 
 export class CreateRewardDto {
   @ApiProperty({
@@ -32,14 +66,6 @@ export class CreateRewardDto {
   name: string;
 
   @ApiProperty({
-    example: 100,
-    description: 'total quantity',
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  totalQuantity: number;
-
-  @ApiProperty({
     example: RewardType.ITEM,
     description: 'reward type',
     enum: RewardType,
@@ -47,14 +73,6 @@ export class CreateRewardDto {
   @IsNotEmpty()
   @IsEnum(RewardType)
   type: RewardType;
-
-  @ApiProperty({
-    example: 100,
-    description: 'remaining quantity',
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  remainingQuantity: number;
 
   @ApiProperty({
     example: true,
@@ -76,7 +94,20 @@ export class CreateRewardDto {
       itemCode: '1001',
       itemName: '아이템1',
       quantity: 1,
+      type: RewardType.ITEM,
     },
   })
-  details: ItemRewardDetails | CurrencyRewardDetails | CouponRewardDetails;
+  @IsNotEmpty()
+  @ValidateNested()
+  @Type(() => Object, {
+    keepDiscriminatorProperty: true,
+    discriminator: {
+      property: 'type',
+      subTypes: [
+        { value: ItemRewardDetailDto, name: RewardType.ITEM },
+        { value: CurrencyRewardDetailDto, name: RewardType.CURRENCY },
+      ],
+    },
+  })
+  details: ItemRewardDetailDto | CurrencyRewardDetailDto;
 }

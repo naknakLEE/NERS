@@ -16,27 +16,18 @@ import { EventStatusEnum } from 'apps/event-server/src/event/domain/value-object
 import { EventConditionParams } from '@app/constants';
 
 export class EventConditionDto implements EventConditionParams {
-  @ApiProperty({ enum: EventConditionType })
   @IsEnum(EventConditionType)
   @IsNotEmpty()
   type: EventConditionType;
 
-  @ApiProperty()
   @IsString()
   @IsNotEmpty()
   name: string;
 
-  @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   description?: string;
 
-  @ApiPropertyOptional({
-    description: 'Parameters specific to the condition type',
-    example: { requiredLevel: 50 },
-    type: 'object',
-    additionalProperties: true,
-  })
   @IsOptional()
   @IsObject()
   parameters?: Record<string, any>;
