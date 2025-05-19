@@ -24,7 +24,7 @@ export class Reward {
   eventId: Types.ObjectId;
 
   @Prop({ required: true, trim: true, type: String })
-  name: string; // 보상 이름 (예: "매일 출석 보상 - 1000 포인트", "특별 접속 이벤트 - 레전드리 무기 상자")
+  name: string;
 
   @Prop({ required: true, enum: RewardType, type: String })
   type: RewardType;
