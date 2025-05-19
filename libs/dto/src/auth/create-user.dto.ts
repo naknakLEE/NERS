@@ -1,3 +1,4 @@
+import { Role } from '@app/constants';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
@@ -5,6 +6,7 @@ import {
   MaxLength,
   IsNotEmpty,
   Matches,
+  IsEnum,
 } from 'class-validator';
 
 export class CreateUserDto {
@@ -29,4 +31,12 @@ export class CreateUserDto {
       'The password must be 8 to 16 characters long and include at least one letter, one number, and one special character.',
   })
   password: string;
+
+  @ApiProperty({
+    default: Role.USER,
+    description: '역할',
+    enum: Role,
+  })
+  @IsEnum(Role)
+  role: Role;
 }

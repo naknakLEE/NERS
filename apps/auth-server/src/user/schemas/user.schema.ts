@@ -37,12 +37,7 @@ export class User {
 export const UserSchema = SchemaFactory.createForClass(User);
 
 UserSchema.methods.comparePassword = User.prototype.comparePassword;
-UserSchema.pre<UserDocument>('save', async function (next) {
-  if (this.isModified('password') || this.isNew) {
-    this.password = await User.hashPassword(this.password);
-  }
-  next();
-});
+
 UserSchema.set('toJSON', {
   transform: (doc, ret) => {
     delete ret.password;
