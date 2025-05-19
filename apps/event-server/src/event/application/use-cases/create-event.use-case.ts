@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  ConflictException,
-  InternalServerErrorException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Event } from '../../domain/entites/event.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';

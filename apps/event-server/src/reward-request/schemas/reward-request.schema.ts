@@ -3,15 +3,7 @@ import { Document, Types } from 'mongoose';
 import { Event } from '../../event/schemas/event.schema';
 import { Reward } from '../../reward/schemas/reward.schema';
 import { User } from 'apps/auth-server/src/account/infrastructure/repositories/schemas/user.schema';
-
-export enum RewardRequestStatus {
-  APPROVED = 'APPROVED', // 조건 충족, 보상 지급 승인됨
-  REJECTED_CONDITION = 'REJECTED_CONDITION',
-  REJECTED_DUPLICATE = 'REJECTED_DUPLICATE',
-  REJECTED_EVENT_INACTIVE = 'REJECTED_EVENT_INACTIVE',
-  REJECTED_NO_REWARD = 'REJECTED_NO_REWARD',
-  FAILED_SERVER_ERROR = 'FAILED_SERVER_ERROR',
-}
+import { RewardRequestStatus } from '@app/constants';
 
 export type RewardRequestDocument = RewardRequest & Document;
 

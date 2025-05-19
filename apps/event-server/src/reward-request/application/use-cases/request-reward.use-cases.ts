@@ -1,24 +1,26 @@
-import { GetRewardHistoryDto } from '@app/dto/event/get-reward-history.dto';
-import { RewardRequestDto } from '@app/dto/event/reward-request.dto';
 import {
   BadRequestException,
-  ConflictException,
-  Injectable,
   InternalServerErrorException,
   Logger,
+} from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
   NotFoundException,
 } from '@nestjs/common';
+
 import {
   RewardRequest,
   RewardRequestDocument,
-} from './schemas/reward-request.schema';
-import { FilterQuery } from 'mongoose';
-import { InjectModel } from '@nestjs/mongoose';
+} from '../../schemas/reward-request.schema';
 import { Model } from 'mongoose';
-import { UserFromHeader } from '../common/get-user-from-header.decorator';
-import { Reward } from '../reward/schemas/reward.schema';
-import { RewardDocument } from '../reward/schemas/reward.schema';
-import { EventDocument } from '../event/schemas/event.schema';
+import { EventDocument } from '../../../event/schemas/event.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery } from 'mongoose';
+import { Reward } from 'apps/event-server/src/reward/schemas/reward.schema';
+import { RewardDocument } from 'apps/event-server/src/reward/schemas/reward.schema';
+import { RewardRequestDto } from '@app/dto/event/reward-request.dto';
+import { UserFromHeader } from '../../../common/get-user-from-header.decorator';
 
 interface MockUserActivityData {
   loginStreak?: number;
@@ -30,9 +32,8 @@ interface MockUserActivityData {
 }
 
 @Injectable()
-export class RewardRequestService {
-  private readonly logger = new Logger(RewardRequestService.name);
-
+export class RequestRewardUseCase {
+  private readonly logger = new Logger(RequestRewardUseCase.name);
   constructor(
     @InjectModel(RewardRequest.name)
     private rewardRequestModel: Model<RewardRequestDocument>,
@@ -42,9 +43,9 @@ export class RewardRequestService {
     private eventModel: Model<EventDocument>,
   ) {}
 
-  async requestReward(dto: RewardRequestDto, user: UserFromHeader) {
+  async execute(requestRewardDto: RewardRequestDto, user: UserFromHeader) {
     const { userId } = user;
-    const { eventId } = dto;
+    const { eventId } = requestRewardDto;
 
     const event = await this.eventModel.findById(eventId);
     if (!event) {
@@ -72,7 +73,7 @@ export class RewardRequestService {
 
     const reward = await this.rewardModel.findOne({ eventId });
     if (!reward) {
-      throw new BadRequestException('Event not found.');
+      throw new BadRequestException('Reward not found.');
     }
 
     const meetsConditions = await this.checkEventConditions(userId, event);
@@ -205,9 +206,5 @@ export class RewardRequestService {
       level: Math.floor(Math.random() * 200),
       completedQuests: Math.random() > 0.5 ? ['some_quest'] : [],
     };
-  }
-
-  async getUserRewardRequestHistory(request: GetRewardHistoryDto) {
-    return this.rewardRequestModel.find(request);
   }
 }

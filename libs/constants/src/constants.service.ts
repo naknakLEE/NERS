@@ -21,6 +21,16 @@ export enum CurrencyType {
   MILEAGE = 'MILEAGE',
 }
 
+export enum RewardRequestStatus {
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED', // 조건 충족, 보상 지급 승인됨
+  REJECTED_CONDITION = 'REJECTED_CONDITION',
+  REJECTED_DUPLICATE = 'REJECTED_DUPLICATE',
+  REJECTED_EVENT_INACTIVE = 'REJECTED_EVENT_INACTIVE',
+  REJECTED_NO_REWARD = 'REJECTED_NO_REWARD',
+  FAILED_SERVER_ERROR = 'FAILED_SERVER_ERROR',
+}
+
 export interface IItemRewardParams {
   type: RewardType.ITEM;
   itemCode: string;
