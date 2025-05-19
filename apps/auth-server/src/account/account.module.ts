@@ -14,6 +14,8 @@ import { RefreshToken } from './infrastructure/repositories/schemas/refresh-toke
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { RefreshTokenRepository } from './infrastructure/repositories/refresh-token.repository';
+import { LogoutUserUseCase } from './application/use-cases/logout-user.use-case';
+import { RefreshTokenUseCase } from './application/use-cases/refresh-token.use-case';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { RefreshTokenRepository } from './infrastructure/repositories/refresh-to
     // Use Cases
     CreateUserUseCase,
     LoginUserUseCase,
+    LogoutUserUseCase,
+    RefreshTokenUseCase,
     // Repositories
     {
       provide: 'UserRepository',

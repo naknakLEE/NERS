@@ -1,14 +1,16 @@
-import { RefreshTokenDocument } from 'apps/auth-server/src/account/infrastructure/repositories/schemas/refresh-token.schema';
+import { RefreshTokenDocument } from '../../infrastructure/repositories/schemas/refresh-token.schema';
+import { RefreshToken } from '../../domain/entites/refresh-token.entity';
 
-import { RefreshToken } from 'apps/auth-server/src/account/infrastructure/repositories/schemas/refresh-token.schema';
-
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as ms from 'ms';
 import { User } from '../../domain/entites/user.entity';
+import { IRefreshTokenRepository } from '../../domain/repositories/refresh-token.interface';
 
 export interface Tokens {
   access_token: string;
@@ -18,17 +20,14 @@ export interface Tokens {
 @Injectable()
 export class JwtTokenService {
   constructor(
-    @InjectModel(RefreshToken.name)
-    private refreshTokenModel: Model<RefreshTokenDocument>,
+    @Inject('RefreshTokenRepository')
+    private refreshTokenRepository: IRefreshTokenRepository,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
 
   async revokeRefreshToken(tokenId: string): Promise<void> {
-    await this.refreshTokenModel.updateOne(
-      { _id: tokenId },
-      { isRevoked: true },
-    );
+    await this.refreshTokenRepository.update(tokenId, { isRevoked: true });
   }
 
   async generateTokens(user: User): Promise<Tokens> {
@@ -54,10 +53,7 @@ export class JwtTokenService {
     return { access_token: accessToken, refresh_token: refreshToken };
   }
 
-  async saveRefreshToken(
-    userId: string,
-    token: string,
-  ): Promise<RefreshTokenDocument> {
+  async saveRefreshToken(userId: string, token: string): Promise<RefreshToken> {
     const expiresInString = this.configService.get<string>(
       'JWT_REFRESH_TOKEN_EXPIRATION_TIME',
     );
@@ -71,11 +67,15 @@ export class JwtTokenService {
 
     const expiresAt = new Date(Date.now() + expiresInMilliseconds);
 
-    const refreshTokenDoc = new this.refreshTokenModel({
+    const refreshToken = new RefreshToken(
+      null,
       userId,
       token,
       expiresAt,
-    });
-    return refreshTokenDoc.save();
+      false,
+    );
+    const refreshTokenDoc =
+      await this.refreshTokenRepository.create(refreshToken);
+    return refreshTokenDoc;
   }
 }

@@ -1,5 +1,5 @@
 import { JwtTokenService } from '../service/jwt-token.service';
-import { Inject, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Logger } from '@nestjs/common';
 import { IRefreshTokenRepository } from '../../domain/repositories/refresh-token.interface';
 
 export class LogoutUserUseCase {
@@ -11,8 +11,10 @@ export class LogoutUserUseCase {
   ) {}
 
   async execute(refreshToken: string): Promise<void> {
-    const refreshTokenDoc =
-      await this.refreshTokenRepository.findByAliveToken(refreshToken);
+    const refreshTokenDoc = await this.refreshTokenRepository.findByToken(
+      refreshToken,
+      false,
+    );
     if (refreshTokenDoc) {
       await this.jwtTokenService.revokeRefreshToken(refreshTokenDoc.id);
       this.logger.log(

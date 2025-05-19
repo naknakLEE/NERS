@@ -20,11 +20,50 @@ export class RefreshTokenRepository implements IRefreshTokenRepository {
     );
   }
 
-  async findByAliveToken(refreshToken: string): Promise<RefreshToken> {
+  async findByToken(
+    refreshToken: string,
+    isRevoked?: boolean,
+  ): Promise<RefreshToken> {
     const refreshTokenDoc = await this.refreshTokenModel.findOne({
       token: refreshToken,
-      isRevoked: false,
+      isRevoked: isRevoked,
     });
+    return refreshTokenDoc ? this.toDomain(refreshTokenDoc) : null;
+  }
+
+  async findByUserIdAndToken(
+    userId: string,
+    token: string,
+    isRevoked?: boolean,
+  ): Promise<RefreshToken> {
+    const refreshTokenDoc = await this.refreshTokenModel.findOne({
+      userId: userId,
+      token: token,
+      isRevoked: isRevoked,
+    });
+    return refreshTokenDoc ? this.toDomain(refreshTokenDoc) : null;
+  }
+
+  async create(refreshToken: RefreshToken): Promise<RefreshToken> {
+    const createData = {
+      userId: refreshToken.userId,
+      token: refreshToken.token,
+      expiresAt: refreshToken.expiresAt,
+      isRevoked: refreshToken.isRevoked,
+    };
+    const refreshTokenDoc = await this.refreshTokenModel.create(createData);
+    return this.toDomain(refreshTokenDoc);
+  }
+
+  async update(
+    token: string,
+    data: UpdateQuery<RefreshTokenDocument>,
+  ): Promise<RefreshToken> {
+    const refreshTokenDoc = await this.refreshTokenModel.findOneAndUpdate(
+      { token },
+      data,
+      { new: true },
+    );
     return refreshTokenDoc ? this.toDomain(refreshTokenDoc) : null;
   }
 }
