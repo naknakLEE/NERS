@@ -23,20 +23,9 @@ export class User {
     required: true,
   })
   role: string;
-
-  static async hashPassword(password: string): Promise<string> {
-    const saltRounds = 10;
-    return bcrypt.hash(password, saltRounds);
-  }
-
-  async comparePassword(plainPassword: string): Promise<boolean> {
-    return bcrypt.compare(plainPassword, this.password);
-  }
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
-
-UserSchema.methods.comparePassword = User.prototype.comparePassword;
 
 UserSchema.set('toJSON', {
   transform: (doc, ret) => {
