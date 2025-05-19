@@ -1,17 +1,36 @@
-import { Controller, Post, Body, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Req,
+  Res,
+  Logger,
+} from '@nestjs/common';
 import { ApiConsumes } from '@nestjs/swagger';
 import { EventService } from './event.service';
-import { CreateEventDto } from './dto/create-event.dto';
+import { CreateEventDto } from '@app/dto/event/create-event.dto';
+import {
+  UserFromHeader,
+  GetUserFromHeader,
+} from '../common/get-user-from-header.decorator';
+import { Role } from '@app/constants';
 
 @Controller()
 export class EventController {
+  private readonly logger = new Logger(EventController.name);
   constructor(private readonly eventService: EventService) {}
 
-  // POST /events: 이벤트 생성
   @Post()
   @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
   createEvent(@Body() createEventDto: CreateEventDto) {
-    return this.eventService.createEvent(createEventDto);
+    const user = {
+      userId: '1',
+      role: Role.ADMIN,
+      username: 'test',
+    };
+    return this.eventService.createEvent(createEventDto, user);
   }
 
   // GET /events: 이벤트 목록 조회

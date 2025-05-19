@@ -15,7 +15,6 @@ import {
 } from 'class-validator';
 import { EventStatus } from '../../../../apps/event-server/src/event/schemas/event.schema';
 import { EventConditionType } from './condition/condition-type.enum';
-
 import { Type } from 'class-transformer';
 
 export class EventConditionDto {
