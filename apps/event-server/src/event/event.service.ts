@@ -3,10 +3,11 @@ import {
   InternalServerErrorException,
   Logger,
 } from '@nestjs/common';
-import { CreateEventDto } from './dto/create-event.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { EventDocument } from './schemas/event.schema';
+import { CreateEventDto } from '@app/dto/event/create-event.dto';
+import { UserFromHeader } from '../common/get-user-from-header.decorator';
 
 @Injectable()
 export class EventService {
@@ -15,8 +16,11 @@ export class EventService {
     @InjectModel(Event.name) private eventModel: Model<EventDocument>,
   ) {}
 
-  async createEvent(createEventDto: CreateEventDto) {
-    const newEvent = new this.eventModel(createEventDto);
+  async createEvent(createEventDto: CreateEventDto, user: UserFromHeader) {
+    const newEvent = new this.eventModel({
+      ...createEventDto,
+      createdBy: user.userId,
+    });
     try {
       const savedEvent = await newEvent.save();
       return savedEvent;

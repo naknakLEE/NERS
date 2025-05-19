@@ -28,6 +28,14 @@ export class ProxyService {
       method: method as Method,
       url: targetUrl,
       data: body,
+      ...(user && {
+        headers: {
+          ...headers,
+          'x-user-id': (user as any).userId,
+          'x-user-name': (user as any).username,
+          'x-user-role': (user as any).role,
+        },
+      }),
       validateStatus: (status) => status < 500,
     };
 

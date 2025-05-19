@@ -1,10 +1,11 @@
-import { Controller, Get, Logger, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Logger, Post, Req, Res } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ProxyService } from './proxy.service';
 import { Request, Response } from 'express';
 import { Role } from '@app/constants';
 import { Roles } from '../auth/roles.decorator';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { CreateEventDto } from '@app/dto/event/create-event.dto';
 
 @Controller()
 @ApiTags('Event')
@@ -28,8 +29,19 @@ export class ProxyEventController {
   }
 
   @Get('event/ping')
-  @Roles(Role.USER)
+  @Roles(Role.ADMIN, Role.USER, Role.AUDITOR, Role.OPERATOR)
   proxyEventPing(@Req() req: Request, @Res() res: Response): void {
+    this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  @Post('event')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  proxyEventCreate(
+    @Body() body: CreateEventDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ): void {
     this.proxyService.proxyToService(this.eventServiceUrl, req, res);
   }
 }
