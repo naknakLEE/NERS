@@ -29,12 +29,10 @@ export class EventController {
 
   @Post()
   @ApiConsumes('application/json')
-  createEvent(@Body() createEventDto: CreateEventDto) {
-    const user = {
-      userId: '1',
-      role: Role.ADMIN,
-      username: 'test',
-    };
+  createEvent(
+    @Body() createEventDto: CreateEventDto,
+    @GetUserFromHeader() user: UserFromHeader,
+  ) {
     return this.createEventUseCase.execute(createEventDto, user);
   }
 

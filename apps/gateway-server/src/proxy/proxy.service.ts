@@ -28,14 +28,13 @@ export class ProxyService {
       method: method as Method,
       url: targetUrl,
       data: body,
-      ...(user && {
-        headers: {
-          ...headers,
+      headers: {
+        ...(user && {
           'x-user-id': (user as any).userId,
           'x-user-name': (user as any).username,
           'x-user-role': (user as any).role,
-        },
-      }),
+        }),
+      },
       validateStatus: (status) => status < 500,
     };
 
@@ -45,8 +44,15 @@ export class ProxyService {
       );
       res.status(serviceResponse.status).json(serviceResponse.data);
     } catch (error) {
-      this.logger.error(`Error proxying request: ${error}`);
-      res.status(500).json({ message: 'Internal server error' });
+      this.logger.error(
+        `Error proxying to ${targetUrl}: ${error.message}`,
+        error.stack,
+      );
+      res.status(500).json({
+        statusCode: 500,
+        message: 'Internal Gateway Error: An unexpected error occurred.',
+        error: 'Internal Server Error',
+      });
     }
   }
 }

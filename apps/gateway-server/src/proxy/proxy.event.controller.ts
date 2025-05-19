@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Logger, Post, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ProxyService } from './proxy.service';
 import { Request, Response } from 'express';
@@ -6,6 +15,7 @@ import { Role } from '@app/constants';
 import { Roles } from '../auth/roles.decorator';
 import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { CreateEventDto } from '@app/dto/event/create-event.dto';
+import { GetEventsDto } from '@app/dto/event/get-events.dto';
 
 @Controller()
 @ApiTags('Event')
@@ -36,12 +46,22 @@ export class ProxyEventController {
 
   @Post('event')
   @Roles(Role.ADMIN, Role.OPERATOR)
-  @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  @ApiConsumes('application/json')
   proxyEventCreate(
     @Body() body: CreateEventDto,
     @Req() req: Request,
     @Res() res: Response,
   ): void {
+    this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  @Get('event')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  getEvents(
+    @Query() getEventsDto: GetEventsDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     this.proxyService.proxyToService(this.eventServiceUrl, req, res);
   }
 }

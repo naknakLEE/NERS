@@ -72,6 +72,7 @@ export class ProxyAuthController {
 
   @Post('auth/register')
   @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  @Roles(Role.ADMIN)
   proxyAuthRegister(
     @Body() createUserDto: CreateUserDto,
     @Req() req: Request,

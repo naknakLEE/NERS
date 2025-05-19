@@ -24,7 +24,6 @@ export class CreateUserUseCase {
       new PlainPasswordVO(dto.password),
       new RoleVO(dto.role),
     );
-
     return this.userRepository.create(newUser);
   }
 }

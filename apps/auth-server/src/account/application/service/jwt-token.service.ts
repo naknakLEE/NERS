@@ -32,8 +32,8 @@ export class JwtTokenService {
   async generateTokens(user: User): Promise<Tokens> {
     const accessTokenPayload = {
       userId: user.id,
-      username: user.username,
-      role: user.role,
+      username: user.username.value,
+      role: user.role.value,
     };
     const refreshTokenPayload = {
       userId: user.id,
