@@ -1,4 +1,4 @@
-import { UserSchema } from '../user/schemas/user.schema';
+import { UserSchema } from './infrastructure/repositories/schemas/user.schema';
 import { User } from './domain/entites/user.entity';
 
 import { MongooseModule } from '@nestjs/mongoose';
@@ -9,10 +9,12 @@ import { UserRepository } from './infrastructure/repositories/user.repository';
 import { LoginUserUseCase } from './application/use-cases/login-user.use-case';
 import { JwtTokenService } from './application/service/jwt-token.service';
 import { ConfigService } from '@nestjs/config';
-import { RefreshTokenSchema } from '../user/schemas/refresh-token.schema';
-import { RefreshToken } from '../user/schemas/refresh-token.schema';
+import { RefreshTokenSchema } from './infrastructure/repositories/schemas/refresh-token.schema';
+import { RefreshToken } from './infrastructure/repositories/schemas/refresh-token.schema';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { RefreshTokenRepository } from './infrastructure/repositories/refresh-token.repository';
+
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
@@ -41,6 +43,10 @@ import { JwtModule } from '@nestjs/jwt';
     {
       provide: 'UserRepository',
       useClass: UserRepository,
+    },
+    {
+      provide: 'RefreshTokenRepository',
+      useClass: RefreshTokenRepository,
     },
     // Services
     JwtTokenService,

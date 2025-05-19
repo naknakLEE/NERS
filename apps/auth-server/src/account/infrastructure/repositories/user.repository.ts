@@ -1,7 +1,7 @@
 import { User } from '../../domain/entites/user.entity';
 import { Model, UpdateQuery } from 'mongoose';
 import { IUserRepository } from '../../domain/repositories/user.repository.interface';
-import { UserDocument } from 'apps/auth-server/src/user/schemas/user.schema';
+import { UserDocument } from 'apps/auth-server/src/account/infrastructure/repositories/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { UsernameVO } from '../../domain/value-objects/username.vo';
 import { HashedPasswordVO } from '../../domain/value-objects/hashed-password.vo';

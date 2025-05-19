@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from './schemas/user.schema';
-import { UserDocument } from './schemas/user.schema';
+import { User } from '../account/infrastructure/repositories/schemas/user.schema';
+import { UserDocument } from '../account/infrastructure/repositories/schemas/user.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UpdateUserRoleDto } from '@app/dto';

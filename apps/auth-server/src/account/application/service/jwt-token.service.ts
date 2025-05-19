@@ -1,6 +1,6 @@
-import { RefreshTokenDocument } from 'apps/auth-server/src/user/schemas/refresh-token.schema';
+import { RefreshTokenDocument } from 'apps/auth-server/src/account/infrastructure/repositories/schemas/refresh-token.schema';
 
-import { RefreshToken } from 'apps/auth-server/src/user/schemas/refresh-token.schema';
+import { RefreshToken } from 'apps/auth-server/src/account/infrastructure/repositories/schemas/refresh-token.schema';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -23,6 +23,13 @@ export class JwtTokenService {
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
+
+  async revokeRefreshToken(tokenId: string): Promise<void> {
+    await this.refreshTokenModel.updateOne(
+      { _id: tokenId },
+      { isRevoked: true },
+    );
+  }
 
   async generateTokens(user: User): Promise<Tokens> {
     const accessTokenPayload = {

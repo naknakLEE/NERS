@@ -1,6 +1,6 @@
 import { User } from '../entites/user.entity';
 import { UpdateQuery } from 'mongoose';
-import { UserDocument } from '../../../user/schemas/user.schema';
+import { UserDocument } from '../../infrastructure/repositories/schemas/user.schema';
 
 export interface IUserRepository {
   create(user: User): Promise<User>;

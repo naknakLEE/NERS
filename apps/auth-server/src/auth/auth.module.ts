@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from '../user/schemas/user.schema';
+import { User, UserSchema } from '../account/infrastructure/repositories/schemas/user.schema';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { JwtModule } from '@nestjs/jwt';
@@ -9,7 +9,7 @@ import { ConfigModule } from '@nestjs/config';
 import {
   RefreshToken,
   RefreshTokenSchema,
-} from '../user/schemas/refresh-token.schema';
+} from '../account/infrastructure/repositories/schemas/refresh-token.schema';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),

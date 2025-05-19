@@ -1,5 +1,8 @@
 import { Model } from 'mongoose';
-import { User, UserDocument } from '../user/schemas/user.schema';
+import {
+  User,
+  UserDocument,
+} from '../account/infrastructure/repositories/schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   ConflictException,
@@ -13,7 +16,7 @@ import { JwtService } from '@nestjs/jwt';
 import {
   RefreshToken,
   RefreshTokenDocument,
-} from '../user/schemas/refresh-token.schema';
+} from '../account/infrastructure/repositories/schemas/refresh-token.schema';
 import { ConfigService } from '@nestjs/config';
 import * as ms from 'ms';
 import { CreateUserDto, LoginDto, RefreshTokenDto } from '@app/dto';
@@ -33,121 +36,121 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  // async login(loginDto: LoginDto): Promise<Tokens> {
-  //   const { username, password } = loginDto;
+  async login(loginDto: LoginDto): Promise<Tokens> {
+    const { username, password } = loginDto;
 
-  //   const user = await this.userModel.findOne({ username });
+    const user = await this.userModel.findOne({ username });
 
-  //   if (!user) {
-  //     throw new UnauthorizedException('Invalid credentials');
-  //   }
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
 
-  //   const isPasswordValid = await user.comparePassword(password);
+    const isPasswordValid = await user.comparePassword(password);
 
-  //   if (!isPasswordValid) {
-  //     throw new UnauthorizedException('Invalid credentials');
-  //   }
-  //   const tokens = await this.generateTokens(user);
-  //   await this.saveRefreshToken(user.id, tokens.refresh_token);
-  //   return tokens;
-  // }
-  // async register(createUserDto: CreateUserDto) {
-  //   const { username } = createUserDto;
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    const tokens = await this.generateTokens(user);
+    await this.saveRefreshToken(user.id, tokens.refresh_token);
+    return tokens;
+  }
+  async register(createUserDto: CreateUserDto) {
+    const { username } = createUserDto;
 
-  //   const existingUser = await this.userModel
-  //     .findOne({ $or: [{ username }] })
-  //     .exec();
-  //   if (existingUser) {
-  //     if (existingUser.username === username) {
-  //       throw new ConflictException(`Username '${username}' already exists.`);
-  //     }
-  //   }
+    const existingUser = await this.userModel
+      .findOne({ $or: [{ username }] })
+      .exec();
+    if (existingUser) {
+      if (existingUser.username === username) {
+        throw new ConflictException(`Username '${username}' already exists.`);
+      }
+    }
 
-  //   const newUser = new this.userModel(createUserDto);
+    const newUser = new this.userModel(createUserDto);
 
-  //   try {
-  //     const savedUser = await newUser.save();
+    try {
+      const savedUser = await newUser.save();
 
-  //     return {
-  //       username: savedUser.username,
-  //       role: savedUser.role,
-  //     } as User;
-  //   } catch (error) {
-  //     if (error.code === 11000) {
-  //       throw new ConflictException('Username or email already exists.');
-  //     }
-  //     throw new InternalServerErrorException('Failed to create user.');
-  //   }
-  // }
+      return {
+        username: savedUser.username,
+        role: savedUser.role,
+      } as User;
+    } catch (error) {
+      if (error.code === 11000) {
+        throw new ConflictException('Username or email already exists.');
+      }
+      throw new InternalServerErrorException('Failed to create user.');
+    }
+  }
 
-  // async revokeRefreshToken(tokenId: string): Promise<void> {
-  //   await this.refreshTokenModel.updateOne(
-  //     { _id: tokenId },
-  //     { isRevoked: true },
-  //   );
-  // }
+  async revokeRefreshToken(tokenId: string): Promise<void> {
+    await this.refreshTokenModel.updateOne(
+      { _id: tokenId },
+      { isRevoked: true },
+    );
+  }
 
-  // async logout(refreshTokenValue: string): Promise<void> {
-  //   const refreshTokenDoc = await this.refreshTokenModel.findOne({
-  //     token: refreshTokenValue,
-  //     isRevoked: false,
-  //   });
-  //   if (refreshTokenDoc) {
-  //     await this.revokeRefreshToken(refreshTokenDoc._id.toString());
-  //     this.logger.log(
-  //       `User logged out, refresh token revoked for token: ${refreshTokenValue.substring(0, 10)}...`,
-  //     );
-  //   } else {
-  //     this.logger.warn(
-  //       `Logout attempt with invalid or already revoked refresh token: ${refreshTokenValue.substring(0, 10)}...`,
-  //     );
-  //   }
-  // }
+  async logout(refreshTokenValue: string): Promise<void> {
+    const refreshTokenDoc = await this.refreshTokenModel.findOne({
+      token: refreshTokenValue,
+      isRevoked: false,
+    });
+    if (refreshTokenDoc) {
+      await this.revokeRefreshToken(refreshTokenDoc._id.toString());
+      this.logger.log(
+        `User logged out, refresh token revoked for token: ${refreshTokenValue.substring(0, 10)}...`,
+      );
+    } else {
+      this.logger.warn(
+        `Logout attempt with invalid or already revoked refresh token: ${refreshTokenValue.substring(0, 10)}...`,
+      );
+    }
+  }
 
-  // async refreshToken(oldRefreshToken: RefreshTokenDto): Promise<Tokens> {
-  //   let decoded;
-  //   try {
-  //     decoded = await this.jwtService.verifyAsync(
-  //       oldRefreshToken.refreshToken,
-  //       {
-  //         secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
-  //       },
-  //     );
-  //   } catch (error) {
-  //     this.logger.error(`Refresh token verification failed: ${error}`);
-  //     throw new ForbiddenException('Refresh token invalid or revoked.');
-  //   }
+  async refreshToken(oldRefreshToken: RefreshTokenDto): Promise<Tokens> {
+    let decoded;
+    try {
+      decoded = await this.jwtService.verifyAsync(
+        oldRefreshToken.refreshToken,
+        {
+          secret: this.configService.get<string>('JWT_REFRESH_TOKEN_SECRET'),
+        },
+      );
+    } catch (error) {
+      this.logger.error(`Refresh token verification failed: ${error}`);
+      throw new ForbiddenException('Refresh token invalid or revoked.');
+    }
 
-  //   const userId = decoded.userId;
+    const userId = decoded.userId;
 
-  //   const refreshTokenDoc = await this.refreshTokenModel.findOne({
-  //     userId,
-  //     token: oldRefreshToken.refreshToken,
-  //     isRevoked: false,
-  //   });
+    const refreshTokenDoc = await this.refreshTokenModel.findOne({
+      userId,
+      token: oldRefreshToken.refreshToken,
+      isRevoked: false,
+    });
 
-  //   if (!refreshTokenDoc) {
-  //     this.logger.warn(`Refresh token not found or revoked for user ${userId}`);
-  //     throw new ForbiddenException('Refresh token invalid or revoked.');
-  //   }
+    if (!refreshTokenDoc) {
+      this.logger.warn(`Refresh token not found or revoked for user ${userId}`);
+      throw new ForbiddenException('Refresh token invalid or revoked.');
+    }
 
-  //   if (refreshTokenDoc.expiresAt < new Date()) {
-  //     this.logger.warn(`Refresh token expired for user ${userId}`);
-  //     throw new ForbiddenException('Refresh token expired.');
-  //   }
+    if (refreshTokenDoc.expiresAt < new Date()) {
+      this.logger.warn(`Refresh token expired for user ${userId}`);
+      throw new ForbiddenException('Refresh token expired.');
+    }
 
-  //   const user = await this.userModel.findById(userId);
-  //   if (!user) {
-  //     this.logger.error(`User not found for refresh token user ID: ${userId}`);
-  //     await this.revokeRefreshToken(refreshTokenDoc._id.toString());
-  //     throw new UnauthorizedException('User not found.');
-  //   }
+    const user = await this.userModel.findById(userId);
+    if (!user) {
+      this.logger.error(`User not found for refresh token user ID: ${userId}`);
+      await this.revokeRefreshToken(refreshTokenDoc._id.toString());
+      throw new UnauthorizedException('User not found.');
+    }
 
-  //   await this.revokeRefreshToken(refreshTokenDoc._id.toString());
+    await this.revokeRefreshToken(refreshTokenDoc._id.toString());
 
-  //   const newTokens = await this.generateTokens(user);
-  //   await this.saveRefreshToken(user.id, newTokens.refresh_token);
+    const newTokens = await this.generateTokens(user);
+    await this.saveRefreshToken(user.id, newTokens.refresh_token);
 
-  //   return newTokens;
-  // }
+    return newTokens;
+  }
 }
