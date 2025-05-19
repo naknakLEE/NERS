@@ -43,6 +43,10 @@ export class EventController {
   }
 
   // GET /events/:eventId: 이벤트 상세 조회
+  @Get(':eventId')
+  getEventById(@Param('eventId') eventId: string) {
+    return this.eventService.getEventById(eventId);
+  }
 
   // PATCH /events/:eventId: 이벤트 수정
 }

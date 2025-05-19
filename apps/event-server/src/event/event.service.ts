@@ -2,6 +2,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -37,5 +38,18 @@ export class EventService {
       .skip((page - 1) * pageSize)
       .limit(pageSize);
     return events;
+  }
+
+  async getEventById(eventId: string) {
+    try {
+      const event = await this.eventModel.findById(eventId);
+      return event;
+    } catch (error) {
+      if (error.name === 'CastError') {
+        throw new NotFoundException(`Event with ID ${eventId} not found`);
+      }
+      this.logger.error(error);
+      throw new InternalServerErrorException('Failed to get event.');
+    }
   }
 }
