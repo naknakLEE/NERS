@@ -47,6 +47,4 @@ export class EventController {
   getEventById(@Param('eventId') eventId: string) {
     return this.getEventDetailUseCase.execute(eventId);
   }
-
-  // PATCH /events/:eventId: 이벤트 수정
 }

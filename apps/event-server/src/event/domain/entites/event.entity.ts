@@ -5,6 +5,7 @@ import {
 } from '../value-objects/event-status.vo';
 import { EventDateRangeVO } from '../value-objects/event-date-range.vo';
 import { BadRequestException } from '@nestjs/common';
+import { Types } from 'mongoose';
 export class Event {
   private readonly _id: string | null;
   private _name: string;
@@ -42,6 +43,7 @@ export class Event {
   }
 
   public static createNew(args: {
+    id?: string;
     name: string;
     description: string;
     startDate: Date;
@@ -52,6 +54,7 @@ export class Event {
     initialStatus?: EventStatusVO;
   }): Event {
     const {
+      id,
       name,
       description,
       startDate,
@@ -63,7 +66,7 @@ export class Event {
     const now = new Date();
 
     return new Event(
-      null,
+      id,
       name,
       description,
       EventDateRangeVO.create(startDate, endDate),
@@ -112,6 +115,19 @@ export class Event {
   }
   get updatedAt(): Date {
     return this._updatedAt;
+  }
+
+  toJson(): Record<string, any> {
+    return {
+      id: this._id,
+      name: this._name,
+      description: this._description,
+      startDate: this._dateRange.startDate,
+      endDate: this._dateRange.endDate,
+      status: this._status.value,
+      conditions: this._conditions.values,
+      createdBy: new Types.ObjectId(this._createdBy),
+    };
   }
 
   public updateDetails(

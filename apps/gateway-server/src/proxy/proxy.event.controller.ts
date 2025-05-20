@@ -112,6 +112,9 @@ export class ProxyEventController {
 
   @Get('event')
   @Roles(Role.ADMIN, Role.OPERATOR)
+  @ApiOperation({
+    summary: '이벤트 목록 조회',
+  })
   getEvents(
     @Query() getEventsDto: GetEventsDto,
     @Req() req: Request,
@@ -121,6 +124,9 @@ export class ProxyEventController {
   }
 
   @Get('event/:id')
+  @ApiOperation({
+    summary: '이벤트 상세 조회(보상 포함)',
+  })
   @Roles(Role.ADMIN, Role.OPERATOR)
   getEventById(
     @Param('id') id: string,
@@ -130,8 +136,8 @@ export class ProxyEventController {
     this.proxyService.proxyToService(this.eventServiceUrl, req, res);
   }
 
-  // POST /event/reward
-  @Post('event/reward')
+  // POST /event/rewards
+  @Post('event/rewards')
   @Roles(Role.ADMIN, Role.OPERATOR)
   createReward(
     @Body() body: CreateRewardDto,

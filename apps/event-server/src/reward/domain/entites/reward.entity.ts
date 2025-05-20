@@ -14,17 +14,19 @@ export class Reward {
   private readonly _createdAt: Date;
   private _updatedAt: Date;
 
-  public static createNew(
-    eventId: string,
-    name: string,
-    type: RewardTypeVO,
-    details: RewardDetailsVO,
-    isActive: boolean = true,
-    validTo?: Date,
-  ): Reward {
+  public static createNew(args: {
+    id?: string;
+    eventId: string;
+    name: string;
+    type: RewardTypeVO;
+    details: RewardDetailsVO;
+    isActive: boolean;
+    validTo?: Date;
+  }): Reward {
+    const { id, eventId, name, type, details, isActive, validTo } = args;
     const now = new Date();
     return new Reward(
-      null,
+      id,
       eventId,
       name,
       type,
@@ -34,6 +36,20 @@ export class Reward {
       now,
       now,
     );
+  }
+
+  toJson(): Record<string, any> {
+    return {
+      id: this._id,
+      eventId: this._eventId,
+      name: this._name,
+      type: this._type.value,
+      details: this._details.value,
+      isActive: this._isActive,
+      validTo: this._validTo,
+      createdAt: this._createdAt,
+      updatedAt: this._updatedAt,
+    };
   }
 
   public static fromPersistence(

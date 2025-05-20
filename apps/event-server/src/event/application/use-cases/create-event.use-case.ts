@@ -45,7 +45,7 @@ export class CreateEventUseCase {
       startDate: event.startDate,
       endDate: event.endDate,
       status: event.status,
-      conditions: event.conditions,
+      conditions: event.conditions.values,
       createdBy: event.createdBy,
     });
     try {
