@@ -20,6 +20,7 @@ import { GetEventsDto } from '@app/dto/event/get-events.dto';
 import { CreateRewardDto } from '@app/dto/event/create-reward.dto';
 import { GetRewardHistoryDto } from '@app/dto/event/get-reward-history.dto';
 import { RewardRequestDto } from '@app/dto/event/reward-request.dto';
+import { GetRewardsDto } from '@app/dto/event/get-rewards.dto';
 
 @Controller()
 @ApiTags('Event')
@@ -136,11 +137,33 @@ export class ProxyEventController {
     this.proxyService.proxyToService(this.eventServiceUrl, req, res);
   }
 
-  // POST /event/rewards
-  @Post('event/rewards')
+  // POST /event/reward
+  @Post('event/reward')
   @Roles(Role.ADMIN, Role.OPERATOR)
   createReward(
     @Body() body: CreateRewardDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  // GET /reward: 보상 목록 조회
+  @Get('event/reward')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  getRewards(
+    @Query() getRewardsDto: GetRewardsDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  // GET /reward/:rewardId 특정 보상 목록 조회
+  @Get('event/reward/:rewardId')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  getRewardById(
+    @Param('rewardId') rewardId: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {

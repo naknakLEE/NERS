@@ -1,9 +1,12 @@
 import { GetRewardHistoryDto } from '@app/dto/event/get-reward-history.dto';
 import { RewardRequestDto } from '@app/dto/event/reward-request.dto';
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { Role } from '@app/constants';
 import { RequestRewardUseCase } from './application/use-cases/request-reward.use-cases';
 import { GetRewardRequestHistoryUseCase } from './application/use-cases/get-reward-request-history.use-case';
+import {
+  GetUserFromHeader,
+  UserFromHeader,
+} from '../common/get-user-from-header.decorator';
 @Controller('reward-request')
 export class RewardRequestController {
   constructor(
@@ -13,12 +16,10 @@ export class RewardRequestController {
 
   // 유저 보상 요청 (유저)
   @Post()
-  async requestReward(@Body() request: RewardRequestDto) {
-    const user = {
-      userId: 'user_met_all_conditions',
-      role: Role.USER,
-      username: 'test_user',
-    };
+  async requestReward(
+    @Body() request: RewardRequestDto,
+    @GetUserFromHeader() user: UserFromHeader,
+  ) {
     return this.requestRewardUseCase.execute(request, user);
   }
 
