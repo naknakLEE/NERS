@@ -12,7 +12,7 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ProxyService } from './proxy.service';
 import { Request, Response } from 'express';
-import { ApiConsumes, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   CreateUserDto,
   LoginDto,
@@ -45,12 +45,18 @@ export class ProxyAuthController {
   }
 
   @Get('auth/ping')
+  @ApiOperation({
+    summary: 'auth 서버 헬스 체크',
+  })
   proxyAuthPing(@Req() req: Request, @Res() res: Response): void {
     this.proxyService.proxyToService(this.authServiceUrl, req, res);
   }
 
   @Post('auth/logout')
   @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  @ApiOperation({
+    summary: '유저 로그아웃',
+  })
   @ApiTags('Auth')
   proxyAuthLogout(
     @Body() logoutUserDto: LogoutUserDto,
@@ -62,6 +68,9 @@ export class ProxyAuthController {
 
   @Post('auth/refresh')
   @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  @ApiOperation({
+    summary: '유저 토큰 갱신',
+  })
   proxyAuthRefresh(
     @Body() refreshTokenDto: RefreshTokenDto,
     @Req() req: Request,
@@ -72,6 +81,9 @@ export class ProxyAuthController {
 
   @Post('auth/register')
   @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  @ApiOperation({
+    summary: '유저 회원가입',
+  })
   proxyAuthRegister(
     @Body() createUserDto: CreateUserDto,
     @Req() req: Request,
@@ -82,6 +94,9 @@ export class ProxyAuthController {
 
   @Post('auth/login')
   @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  @ApiOperation({
+    summary: '유저 로그인',
+  })
   proxyAuthLogin(
     @Body() loginDto: LoginDto,
     @Req() req: Request,
@@ -93,6 +108,9 @@ export class ProxyAuthController {
   @Patch('auth/user/:userId/role')
   @Roles(Role.ADMIN)
   @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
+  @ApiOperation({
+    summary: '유저 역할 수정 (관리자)',
+  })
   proxyAuthUpdateUserRole(
     @Param('userId') userId: string,
     @Body() updateUserRoleDto: UpdateUserRoleDto,
