@@ -24,8 +24,6 @@ services:
       target: auth-server
     volumes:
       - ./:/app
-    ports:
-      - 3001:3000
     depends_on:
       - mongo-db
 
@@ -38,8 +36,6 @@ services:
       target: event-server
     volumes:
       - ./:/app
-    ports:
-      - 3002:3000
     depends_on:
       - mongo-db
 
