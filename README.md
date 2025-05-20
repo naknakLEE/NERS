@@ -16,7 +16,11 @@ DDD(Domain-Driven Design)의 원칙을 일부 적용하여 도메인 로직의 �
    ```bash
    docker-compose up --build
    ```
-1. API 문서는 각 서비스의 `/api` 경로에서 확인할 수 있습니다 (예: `http://localhost:3000/api` - Auth Server).
+1. 기본 API 문서는 `http://localhost:3000/api` - Auth Server에서 확인하실 수 있습니다.
+   - 각 서비스별로 확인하고 싶다면 `/api` 서비스 포트에 맞춘후 사용해주세요. (기본 API문서를 권장들립니다.)
+   - http://localhost:3001/api - Auth Server
+   - http://localhost:3002/api - event Server
+1. [POST] `auth/register`로 회원 가입 -> `auth/login`으로 로그인 후 토큰을 받은 후 토큰을 이용해 서비스를 사용하십시오.
 
 ## 흐름도
 
@@ -77,9 +81,8 @@ DDD(Domain-Driven Design)의 원칙을 일부 적용하여 도메인 로직의 �
 
 1.  **Gateway Server (`gateway-server`):**
 
-    - 모든 API 요청의 단일 진입점(Single Entry Point).
     - JWT 기반 인증 및 역할(Role) 기반 인가 수행.
-    - 요청 경로에 따라 적절한 백엔드 서비스(Auth, Event)로 라우팅 (HTTP Proxy).
+    - 요청 경로에 따라 백엔드 서비스(Auth, Event)로 라우팅 (HTTP Proxy).
 
 2.  **Auth Server (`auth-server`):**
 
@@ -107,7 +110,7 @@ DDD(Domain-Driven Design)의 원칙을 일부 적용하여 도메인 로직의 �
   - 요청 URL 패턴(` /auth/**`, `/events/**` 등)에 따라 Auth Server 또는 Event Server로 프록시.
   - 인증된 사용자 정보(ID, 역할 등)를 커스텀 HTTP 헤더(`X-User-ID`, `X-User-Role`)에 담아 백엔드 서비스로 전달.
 
-### Auth Server (IAM Domain)
+### Auth Server (account Domain)
 
 - **사용자 (User):**
   - `POST /auth/register`: 사용자 등록 (비밀번호는 bcrypt로 해싱하여 저장).
@@ -154,9 +157,9 @@ DDD(Domain-Driven Design)의 원칙을 일부 적용하여 도메인 로직의 �
       - `EventConditionsVO`에 정의된 조건과 사용자의 실제 활동 데이터(Mock 또는 가상 데이터 소스)를 비교하여 검증.
       - 조건 검증 로직은 유연하게 확장 가능하도록 설계 (예: 조건 유형별 처리).
     - 조건 미충족 또는 중복 시 `REJECTED_...` 상태로 기록.
-    - 조건 충족 시 `APPROVED` 상태로 기록 및 (가상) 보상 지급 처리 (예: `Reward` 엔티티의 `remainingQuantity` 차감).
+    - 조건 충족 시 `APPROVED` 상태로 기록 및 (가상) 보상 지급 처리
   - `GET /reward-requests/me` (USER): 자신의 보상 요청 내역 조회.
-  - `GET /reward-requests` (OPERATOR, AUDITOR, ADMIN): 전체 사용자의 보상 요청 기록 조회 (필터링 기능 선택적 구현).
+  - `GET /reward-requests` (OPERATOR, AUDITOR, ADMIN): 전체 사용자의 보상 요청 기록 조회
 
 ## 🔐 인증 및 인가 구조
 
