@@ -47,6 +47,8 @@ export class RequestRewardUseCase {
     const { userId } = user;
     const { eventId } = requestRewardDto;
 
+    const requestAt = new Date();
+
     const event = await this.eventModel.findById(eventId);
     if (!event) {
       throw new NotFoundException(`Event with ID ${eventId} not found`);
@@ -66,6 +68,17 @@ export class RequestRewardUseCase {
         `Duplicate reward request attempt: User ${userId}, Event ${eventId}`,
       );
 
+      const newRequestDoc = new this.rewardRequestModel({
+        userId,
+        eventId,
+        rewardId: existingRequest._id,
+        status: 'REJECTED_DUPLICATE',
+        claimedAt: existingRequest.claimedAt,
+        processedAt: new Date(),
+        requestedAt: requestAt,
+      });
+      await newRequestDoc.save();
+
       throw new ConflictException(
         'Reward has already been claimed or requested for this event.',
       );
@@ -83,6 +96,8 @@ export class RequestRewardUseCase {
         eventId,
         rewardId: reward._id,
         status: 'REJECTED_CONDITION',
+        processedAt: new Date(),
+        requestedAt: requestAt,
       });
       await newRequestDoc.save();
       throw new BadRequestException('Conditions for the reward are not met.');
@@ -104,6 +119,20 @@ export class RequestRewardUseCase {
         `Error saving reward request: ${dbError.message}`,
         dbError.stack,
       );
+      try {
+        const newRequestDoc = new this.rewardRequestModel({
+          userId,
+          eventId,
+          rewardId: reward._id,
+          status: 'REJECTED_SERVER_ERROR',
+          processedAt: new Date(),
+          requestedAt: requestAt,
+        });
+        await newRequestDoc.save();
+      } catch (e) {
+        this.logger.error(`Error saving reward request: ${e.message}`, e.stack);
+      }
+
       throw new InternalServerErrorException(
         'Failed to process reward request due to a server error.',
       );

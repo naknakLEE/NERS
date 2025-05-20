@@ -14,7 +14,7 @@ import { ProxyService } from './proxy.service';
 import { Request, Response } from 'express';
 import { Role } from '@app/constants';
 import { Roles } from '../auth/roles.decorator';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateEventDto } from '@app/dto/event/create-event.dto';
 import { GetEventsDto } from '@app/dto/event/get-events.dto';
 import { CreateRewardDto } from '@app/dto/event/create-reward.dto';
@@ -172,7 +172,8 @@ export class ProxyEventController {
 
   //post /event/reward-request
   @Post('event/reward-request')
-  @Roles(Role.ADMIN, Role.OPERATOR)
+  @Roles(Role.ADMIN, Role.USER)
+  @ApiConsumes('application/x-www-form-urlencoded', 'application/json')
   createRewardRequest(
     @Body() body: RewardRequestDto,
     @Req() req: Request,
@@ -183,7 +184,7 @@ export class ProxyEventController {
 
   //get /event/reward-request
   @Get('event/reward-request')
-  @Roles(Role.ADMIN, Role.OPERATOR)
+  @Roles(Role.ADMIN, Role.AUDITOR)
   getRewardRequests(
     @Query() getRewardRequestsDto: GetRewardHistoryDto,
     @Req() req: Request,
@@ -194,7 +195,7 @@ export class ProxyEventController {
 
   //get /event/reward-request/:id
   @Get('event/reward-request/:id')
-  @Roles(Role.ADMIN, Role.OPERATOR)
+  @Roles(Role.ADMIN, Role.AUDITOR)
   getRewardRequestById(
     @Param('id') id: string,
     @Req() req: Request,

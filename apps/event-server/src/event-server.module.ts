@@ -20,8 +20,8 @@ import { RewardRequestModule } from './reward-request/reward-request.module';
       inject: [ConfigService],
     }),
     RewardModule,
-    EventModule,
     RewardRequestModule,
+    EventModule,
   ],
   controllers: [EventServerController],
 })
