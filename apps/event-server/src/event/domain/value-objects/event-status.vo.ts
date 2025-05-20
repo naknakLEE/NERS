@@ -1,3 +1,5 @@
+import { BadRequestException } from '@nestjs/common';
+
 export enum EventStatusEnum {
   ACTIVE = 'active',
   INACTIVE = 'inactive',
@@ -23,7 +25,7 @@ export class EventStatusVO {
       (key) => EventStatusEnum[key].toUpperCase() === upperValue,
     );
     if (!enumKey) {
-      throw new Error(`Invalid event status string: ${value}`);
+      throw new BadRequestException(`Invalid event status string: ${value}`);
     }
     return new EventStatusVO(EventStatusEnum[enumKey]);
   }

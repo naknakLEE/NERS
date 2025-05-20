@@ -1,5 +1,6 @@
 import { RewardRequestStatus } from '@app/constants';
 import { RewardRequestStatusVO } from '../value-objects/reward-request-status.vo';
+import { BadRequestException } from '@nestjs/common';
 
 export class RewardRequest {
   private readonly _id: string | null;
@@ -71,7 +72,7 @@ export class RewardRequest {
 
   public approve(processorId?: string, notes?: string): void {
     if (!this._status.isPending()) {
-      throw new Error(
+      throw new BadRequestException(
         `Cannot approve a reward request that is not in PENDING state. Current state: ${this._status.value}`,
       );
     }
@@ -85,7 +86,7 @@ export class RewardRequest {
     notes?: string,
   ): void {
     if (this._status.isApproved() || this._status.isRejected()) {
-      throw new Error(
+      throw new BadRequestException(
         `Cannot reject a reward request in state: ${this._status.value}`,
       );
     }
@@ -93,7 +94,7 @@ export class RewardRequest {
       !reason.startsWith('REJECTED_') &&
       reason !== RewardRequestStatus.FAILED_SERVER_ERROR
     ) {
-      throw new Error(
+      throw new BadRequestException(
         `Invalid rejection reason: ${reason}. Must be a REJECTED_ or FAILED_SERVER_ERROR status.`,
       );
     }
@@ -106,7 +107,9 @@ export class RewardRequest {
     notes?: string,
   ): void {
     if (this._status.value !== RewardRequestStatus.PENDING) {
-      throw new Error('Can only mark PENDING requests as condition failed.');
+      throw new BadRequestException(
+        'Can only mark PENDING requests as condition failed.',
+      );
     }
     this._status = RewardRequestStatusVO.REJECTED_CONDITION;
     this._processedAt = new Date();
@@ -114,7 +117,9 @@ export class RewardRequest {
 
   public markAsDuplicate(notes?: string): void {
     if (this._status.value !== RewardRequestStatus.PENDING) {
-      throw new Error('Can only mark PENDING requests as duplicate.');
+      throw new BadRequestException(
+        'Can only mark PENDING requests as duplicate.',
+      );
     }
     this._status = RewardRequestStatusVO.REJECTED_DUPLICATE;
     this._processedAt = new Date();

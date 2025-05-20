@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { PlainPasswordVO } from './password.vo';
 import * as bcrypt from 'bcrypt';
 
@@ -6,7 +7,7 @@ export class HashedPasswordVO {
 
   constructor(hashedValue: string) {
     if (!hashedValue || hashedValue.trim() === '') {
-      throw new Error('Hashed password value cannot be empty.');
+      throw new BadRequestException('Hashed password value cannot be empty.');
     }
     this._value = hashedValue;
   }

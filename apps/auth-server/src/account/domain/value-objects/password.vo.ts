@@ -1,3 +1,5 @@
+import { BadRequestException } from '@nestjs/common';
+
 export class PlainPasswordVO {
   private readonly _value: string;
 
@@ -8,7 +10,9 @@ export class PlainPasswordVO {
 
   constructor(value: string) {
     if (!PlainPasswordVO.isValid(value)) {
-      throw new Error(PlainPasswordVO.PASSWORD_REQUIREMENTS_MESSAGE);
+      throw new BadRequestException(
+        PlainPasswordVO.PASSWORD_REQUIREMENTS_MESSAGE,
+      );
     }
     this._value = value;
   }

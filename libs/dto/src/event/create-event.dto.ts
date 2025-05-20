@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsNotEmpty,
   IsEnum,
@@ -7,7 +7,6 @@ import {
   ValidateNested,
   IsArray,
   IsOptional,
-  IsBoolean,
   IsObject,
 } from 'class-validator';
 import { EventConditionType } from './condition/condition-type.enum';
@@ -35,7 +34,7 @@ export class EventConditionDto implements EventConditionParams {
 export class CreateEventDto {
   @ApiProperty({
     example: '7일 연속 출석',
-    description: 'event name',
+    description: '이벤트 이름',
   })
   @IsNotEmpty()
   @IsString()
@@ -43,7 +42,7 @@ export class CreateEventDto {
 
   @ApiProperty({
     example: '7일 연속 출석 이벤트',
-    description: 'event description',
+    description: '이벤트 설명',
   })
   @IsNotEmpty()
   @IsString()
@@ -51,23 +50,25 @@ export class CreateEventDto {
 
   @ApiProperty({
     example: '2025-01-01',
-    description: 'event start date',
+    description: '이벤트 시작 날짜',
   })
   @IsNotEmpty()
+  @Type(() => Date)
   @IsDate()
   startDate: Date;
 
   @ApiProperty({
     example: '2025-01-01',
-    description: 'event end date',
+    description: '이벤트 종료 날짜',
   })
   @IsNotEmpty()
+  @Type(() => Date)
   @IsDate()
   endDate: Date;
 
   @ApiProperty({
     example: EventStatusEnum.ACTIVE,
-    description: 'event status',
+    description: '이벤트 상태(active: 활성, inactive: 비활성, completed: 종료)',
     enum: EventStatusEnum,
   })
   @IsNotEmpty()
@@ -75,6 +76,7 @@ export class CreateEventDto {
   status: EventStatusEnum;
 
   @ApiProperty({
+    description: '이벤트 조건',
     example: [
       {
         type: EventConditionType.LOGIN_STREAK,
@@ -88,12 +90,4 @@ export class CreateEventDto {
   @ValidateNested({ each: true })
   @Type(() => EventConditionDto)
   conditions: EventConditionDto[];
-
-  @ApiProperty({
-    example: true,
-    description: 'require all conditions',
-  })
-  @IsNotEmpty()
-  @IsBoolean()
-  requireAllConditions: boolean;
 }

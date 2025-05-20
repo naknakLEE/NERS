@@ -1,11 +1,12 @@
 import { Role } from '@app/constants';
+import { BadRequestException } from '@nestjs/common';
 
 export class RoleVO {
   private readonly _value: string;
 
   constructor(value: string) {
     if (!Object.values(Role).includes(value as Role)) {
-      throw new Error(
+      throw new BadRequestException(
         `Invalid role: ${value}. Must be one of ${Object.values(Role).join(', ')}`,
       );
     }

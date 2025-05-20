@@ -1,5 +1,6 @@
 import { EventConditionParams } from '@app/constants';
 import { EventConditionType } from '@app/dto/event/condition/condition-type.enum';
+import { BadRequestException } from '@nestjs/common';
 
 export interface ILoginStreakCondition extends EventConditionParams {
   type: EventConditionType.LOGIN_STREAK;
@@ -40,7 +41,7 @@ export class EventConditionsVO {
 
   private constructor(conditions: ConditionDetail[]) {
     if (!Array.isArray(conditions)) {
-      throw new Error('Conditions must be an array.');
+      throw new BadRequestException('Conditions must be an array.');
     }
 
     // 각 조건 항목에 대한 유효성 검사 (Enum 값 확인 등)
@@ -51,7 +52,7 @@ export class EventConditionsVO {
           condition.type as EventConditionType,
         )
       ) {
-        throw new Error(
+        throw new BadRequestException(
           `Each condition must have a valid "type" from EventConditionType. Received: ${condition.type}`,
         );
       }
@@ -63,7 +64,7 @@ export class EventConditionsVO {
               'number' ||
             (condition as ILoginStreakCondition).parameters.days <= 0
           ) {
-            throw new Error(
+            throw new BadRequestException(
               'LOGIN_STREAK condition must have a positive "days" number.',
             );
           }
@@ -74,7 +75,7 @@ export class EventConditionsVO {
               .requiredLevel !== 'number' ||
             (condition as IUserLevelCondition).parameters.requiredLevel <= 0
           ) {
-            throw new Error(
+            throw new BadRequestException(
               'USER_LEVEL condition must have a positive "requiredLevel" number.',
             );
           }
@@ -84,7 +85,7 @@ export class EventConditionsVO {
             typeof (condition as IQuestCompletedCondition).parameters
               .questId !== 'string'
           ) {
-            throw new Error(
+            throw new BadRequestException(
               'QUEST_COMPLETED condition must have a valid "questId" string.',
             );
           }
@@ -95,7 +96,7 @@ export class EventConditionsVO {
               .count !== 'number' ||
             (condition as IFriendInvitationCondition).parameters.count <= 0
           ) {
-            throw new Error(
+            throw new BadRequestException(
               'FRIEND_INVITATION condition must have a positive "count" number.',
             );
           }

@@ -1,3 +1,4 @@
+import { BadRequestException } from '@nestjs/common';
 import { RewardDetailsVO } from '../value-objects/reward-details.vo';
 import { RewardTypeVO } from '../value-objects/reward-type.vo';
 import { RewardType as RewardTypeEnum } from '@app/constants';
@@ -59,7 +60,7 @@ export class Reward {
         detailsVO = RewardDetailsVO.createCurrencyReward(detailsData);
         break;
       default:
-        throw new Error(
+        throw new BadRequestException(
           `Unsupported reward type for details hydration: ${type.value}`,
         );
     }
@@ -139,7 +140,7 @@ export class Reward {
     if (newDetails && newDetails.constructor === this._details.constructor) {
       this._details = newDetails;
     } else if (newDetails) {
-      throw new Error(
+      throw new BadRequestException(
         'Cannot change the type of reward details. Create a new reward instead.',
       );
     }

@@ -4,6 +4,7 @@ import {
   EventStatusVO,
 } from '../value-objects/event-status.vo';
 import { EventDateRangeVO } from '../value-objects/event-date-range.vo';
+import { BadRequestException } from '@nestjs/common';
 export class Event {
   private readonly _id: string | null;
   private _name: string;
@@ -123,7 +124,7 @@ export class Event {
       this._status.value === EventStatusEnum.COMPLETED ||
       this._status.value === EventStatusEnum.INACTIVE
     ) {
-      throw new Error(
+      throw new BadRequestException(
         'Cannot update details of a completed or inactive event.',
       );
     }
@@ -138,7 +139,7 @@ export class Event {
 
   public activate(): void {
     if (!this._dateRange.isWithinRange() || this._dateRange.hasEnded()) {
-      throw new Error(
+      throw new BadRequestException(
         'Event cannot be activated outside its date range or if it has ended.',
       );
     }
@@ -147,7 +148,9 @@ export class Event {
       this._status.value === EventStatusEnum.COMPLETED ||
       this._status.value === EventStatusEnum.INACTIVE
     ) {
-      throw new Error('Cannot activate a completed or inactive event.');
+      throw new BadRequestException(
+        'Cannot activate a completed or inactive event.',
+      );
     }
     this._status = EventStatusVO.ACTIVE;
     this._updatedAt = new Date();
@@ -162,7 +165,9 @@ export class Event {
   public complete(): void {
     if (this._status.value === EventStatusEnum.COMPLETED) return;
     if (!this._dateRange.hasEnded()) {
-      throw new Error('Event cannot be completed before its end date.');
+      throw new BadRequestException(
+        'Event cannot be completed before its end date.',
+      );
     }
     this._status = EventStatusVO.COMPLETED;
     this._updatedAt = new Date();
@@ -173,7 +178,9 @@ export class Event {
       this._status.value !== EventStatusEnum.COMPLETED &&
       this._status.value !== EventStatusEnum.INACTIVE
     ) {
-      throw new Error('Only completed or inactive events can be archived.');
+      throw new BadRequestException(
+        'Only completed or inactive events can be archived.',
+      );
     }
     this._status = EventStatusVO.INACTIVE;
     this._updatedAt = new Date();

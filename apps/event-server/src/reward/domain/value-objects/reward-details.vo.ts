@@ -4,6 +4,7 @@ import {
   IItemRewardParams,
   RewardType,
 } from '@app/constants';
+import { BadRequestException } from '@nestjs/common';
 
 export type RewardDetail = IItemRewardParams | ICurrencyRewardParams;
 
@@ -15,7 +16,7 @@ export class RewardDetailsVO {
       case RewardType.ITEM:
         const itemParams = detail;
         if (!itemParams.itemCode || typeof itemParams.itemCode !== 'string') {
-          throw new Error(
+          throw new BadRequestException(
             'ITEM reward requires a valid "itemCode" string in parameters.',
           );
         }
@@ -23,7 +24,7 @@ export class RewardDetailsVO {
           typeof itemParams.quantity !== 'number' ||
           itemParams.quantity <= 0
         ) {
-          throw new Error(
+          throw new BadRequestException(
             'ITEM reward requires a positive "quantity" number in parameters.',
           );
         }
@@ -34,7 +35,7 @@ export class RewardDetailsVO {
           !currencyParams.currencyType ||
           !Object.values(CurrencyType).includes(currencyParams.currencyType)
         ) {
-          throw new Error(
+          throw new BadRequestException(
             'CURRENCY reward requires a valid "currencyType" in parameters.',
           );
         }
@@ -42,14 +43,14 @@ export class RewardDetailsVO {
           typeof currencyParams.amount !== 'number' ||
           currencyParams.amount <= 0
         ) {
-          throw new Error(
+          throw new BadRequestException(
             'CURRENCY reward requires a positive "amount" number in parameters.',
           );
         }
         break;
       default:
         const exhaustiveCheck: never = detail;
-        throw new Error(
+        throw new BadRequestException(
           `Unsupported reward detail type: ${(exhaustiveCheck as any).type}`,
         );
     }

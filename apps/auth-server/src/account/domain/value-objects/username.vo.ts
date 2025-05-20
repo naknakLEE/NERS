@@ -1,9 +1,11 @@
+import { BadRequestException } from '@nestjs/common';
+
 export class UsernameVO {
   private readonly _value: string;
 
   constructor(value: string) {
     if (!value || value.trim().length === 0) {
-      throw new Error('Username cannot be empty.');
+      throw new BadRequestException('Username cannot be empty.');
     }
     this._value = value.trim();
   }

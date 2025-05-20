@@ -1,10 +1,12 @@
+import { BadRequestException } from '@nestjs/common';
+
 export class EventDateRangeVO {
   public readonly startDate: Date;
   public readonly endDate: Date;
 
   private constructor(startDate: Date, endDate: Date) {
     if (startDate > endDate) {
-      throw new Error('Start date must be before end date');
+      throw new BadRequestException('Start date must be before end date');
     }
     this.startDate = startDate;
     this.endDate = endDate;
