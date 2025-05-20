@@ -16,13 +16,13 @@ DDD(Domain-Driven Design)의 원칙을 일부 적용하여 도메인 로직의 �
    ```bash
    docker-compose up --build
    ```
-1. 기본 API 문서는 `http://localhost:3000/api` - Auth Server에서 확인하실 수 있습니다.
-   - 각 서비스별로 확인하고 싶다면 `/api` 서비스 포트에 맞춘후 사용해주세요. (기본 API문서를 권장들립니다.)
-   - http://localhost:3001/api - Auth Server
-   - http://localhost:3002/api - event Server
+1. 기본 API 문서는 http://localhost:3000/api - Auth Server에서 확인하실 수 있습니다.
+   - 각 서비스별로 확인하고 싶다면 `/api` 서비스 포트에 맞춘후 사용해주세요. (기본 API문서를 권장드립니다.)
+   - Auth Server - 3001번 포트
+   - event Server - 3002번 포트
 1. [POST] `auth/register`로 회원 가입 -> `auth/login`으로 로그인 후 토큰을 받은 후 토큰을 이용해 서비스를 사용하십시오.
 
-## 흐름도
+## 🚀 흐름도
 
 ```
 +-----------+                                 +-----------------+
@@ -66,7 +66,16 @@ DDD(Domain-Driven Design)의 원칙을 일부 적용하여 도메인 로직의 �
 - **API Documentation:** Swagger (OpenAPI)
 - **Deployment/Runtime:** Docker, Docker Compose
 
-## 참고사항
+## 역할
+
+| 역할     | 권한설명              |
+| -------- | --------------------- |
+| USER     | 보상 요청 가능        |
+| OPERATOR | 이벤트/보상 등록      |
+| AUDITOR  | 보상 이력 조회만 가능 |
+| ADMIN    | 모든 기능 접근 가능   |
+
+## 🧩 참고사항
 
 - gateway-server, auth-server, event-server는 nestjs monorepo를 이용하였습니다.
 - 유저가 보상 여건이 충족했는지 확인하기 위해서 유저 행동 값은 임의 생성하였습니다. `getMockUserActivityData`함수
