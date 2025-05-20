@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Logger,
+  Param,
   Post,
   Query,
   Req,
@@ -16,6 +17,9 @@ import { Roles } from '../auth/roles.decorator';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateEventDto } from '@app/dto/event/create-event.dto';
 import { GetEventsDto } from '@app/dto/event/get-events.dto';
+import { CreateRewardDto } from '@app/dto/event/create-reward.dto';
+import { GetRewardHistoryDto } from '@app/dto/event/get-reward-history.dto';
+import { RewardRequestDto } from '@app/dto/event/reward-request.dto';
 
 @Controller()
 @ApiTags('Event')
@@ -110,6 +114,60 @@ export class ProxyEventController {
   @Roles(Role.ADMIN, Role.OPERATOR)
   getEvents(
     @Query() getEventsDto: GetEventsDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  @Get('event/:id')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  getEventById(
+    @Param('id') id: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  // POST /event/reward
+  @Post('event/reward')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  createReward(
+    @Body() body: CreateRewardDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  //post /event/reward-request
+  @Post('event/reward-request')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  createRewardRequest(
+    @Body() body: RewardRequestDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  //get /event/reward-request
+  @Get('event/reward-request')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  getRewardRequests(
+    @Query() getRewardRequestsDto: GetRewardHistoryDto,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    this.proxyService.proxyToService(this.eventServiceUrl, req, res);
+  }
+
+  //get /event/reward-request/:id
+  @Get('event/reward-request/:id')
+  @Roles(Role.ADMIN, Role.OPERATOR)
+  getRewardRequestById(
+    @Param('id') id: string,
     @Req() req: Request,
     @Res() res: Response,
   ) {
