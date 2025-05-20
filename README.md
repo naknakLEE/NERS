@@ -23,6 +23,7 @@ DDD(Domain-Driven Design)의 원칙을 일부 적용하여 도메인 로직의 �
 - gateway-server의 swagger파일을 확인하실 수 있습니다.
   - 서비스 실행 후 http://localhost:3000/api
   - auth-server, event-server의 api를 확인하실 수 있습니다.
+- access token 유효시간은 1시간입니다.
 
 ## 🧩 서버 구성 및 역할
 

@@ -11,6 +11,7 @@ import { Event } from '../event/schemas/event.schema';
 import { EventSchema } from '../event/schemas/event.schema';
 import { RequestRewardUseCase } from './application/use-cases/request-reward.use-cases';
 import { GetRewardRequestHistoryUseCase } from './application/use-cases/get-reward-request-history.use-case';
+import { GetRewardRequestMeUseCase } from './application/use-cases/get-reward-request-me.use-case';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -20,6 +21,10 @@ import { GetRewardRequestHistoryUseCase } from './application/use-cases/get-rewa
     MongooseModule.forFeature([{ name: Event.name, schema: EventSchema }]),
   ],
   controllers: [RewardRequestController],
-  providers: [RequestRewardUseCase, GetRewardRequestHistoryUseCase],
+  providers: [
+    RequestRewardUseCase,
+    GetRewardRequestHistoryUseCase,
+    GetRewardRequestMeUseCase,
+  ],
 })
 export class RewardRequestModule {}

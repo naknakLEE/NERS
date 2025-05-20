@@ -6,7 +6,7 @@ import {
 } from '../../schemas/reward-request.schema';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { GetRewardHistoryDto } from '@app/dto/event/get-reward-history.dto';
+import { GetRewardRequestDto } from '@app/dto/event/get-reward-request.dto';
 
 @Injectable()
 export class GetRewardRequestHistoryUseCase {
@@ -16,7 +16,10 @@ export class GetRewardRequestHistoryUseCase {
     private rewardRequestModel: Model<RewardRequestDocument>,
   ) {}
 
-  async execute(request: GetRewardHistoryDto) {
-    return this.rewardRequestModel.find(request);
+  async execute(request: GetRewardRequestDto) {
+    const { page, pageSize } = request;
+    const skip = (page - 1) * pageSize;
+    const limit = pageSize;
+    return this.rewardRequestModel.find().skip(skip).limit(limit);
   }
 }

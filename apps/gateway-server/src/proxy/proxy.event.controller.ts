@@ -18,9 +18,9 @@ import { ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateEventDto } from '@app/dto/event/create-event.dto';
 import { GetEventsDto } from '@app/dto/event/get-events.dto';
 import { CreateRewardDto } from '@app/dto/event/create-reward.dto';
-import { GetRewardHistoryDto } from '@app/dto/event/get-reward-history.dto';
 import { RewardRequestDto } from '@app/dto/event/reward-request.dto';
 import { GetRewardsDto } from '@app/dto/event/get-rewards.dto';
+import { GetRewardRequestDto } from '@app/dto/event/get-reward-request.dto';
 
 @Controller()
 @ApiTags('Event')
@@ -186,21 +186,18 @@ export class ProxyEventController {
   @Get('event/reward-request')
   @Roles(Role.ADMIN, Role.AUDITOR)
   getRewardRequests(
-    @Query() getRewardRequestsDto: GetRewardHistoryDto,
+    @Query() getRewardRequestsDto: GetRewardRequestDto,
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    console.log(12);
     this.proxyService.proxyToService(this.eventServiceUrl, req, res);
   }
 
-  //get /event/reward-request/:id
-  @Get('event/reward-request/:id')
-  @Roles(Role.ADMIN, Role.AUDITOR)
-  getRewardRequestById(
-    @Param('id') id: string,
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
+  //get /event/reward-request/me
+  @Get('event/reward-request/me')
+  @Roles(Role.ADMIN, Role.USER)
+  getRewardRequestMe(@Req() req: Request, @Res() res: Response) {
     this.proxyService.proxyToService(this.eventServiceUrl, req, res);
   }
 }
